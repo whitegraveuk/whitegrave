@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dreadholme — Campaign Hex Map</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1510;
+    --parchment: #f0e8d8;
+    --parchment-dark: #e0d4bc;
+    --gold: #8a6e3a;
+    --gold-light: #c4a96a;
+    --purple-deep: #2a1f4a;
+    --purple-mid: #4a3880;
+    --teal-deep: #0a3d2e;
+    --amber-deep: #4a2e08;
+    --ash: #7a7870;
+    --blood: #6b2020;
+  }
+
+  body {
+    background: var(--ink);
+    color: var(--parchment);
+    font-family: 'Crimson Text', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Subtle noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 2.5rem 0 2rem;
+    border-bottom: 1px solid rgba(196,169,106,0.3);
+    margin-bottom: 2rem;
+  }
+
+  .sector-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 600;
+    color: var(--parchment);
+    letter-spacing: 0.05em;
+    line-height: 1.1;
+  }
+
+  .subtitle {
+    font-family: 'Crimson Text', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--gold-light);
+    margin-top: 0.5rem;
+    opacity: 0.85;
+  }
+
+  /* Map container */
+  .map-wrap {
+    position: relative;
+    background: #0e0c0a;
+    border: 1px solid rgba(196,169,106,0.2);
+    border-radius: 4px;
+    padding: 1rem;
+  }
+
+  .map-wrap svg {
+    display: block;
+    width: 100%;
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: absolute;
+    background: #1a1510;
+    border: 1px solid rgba(196,169,106,0.4);
+    border-radius: 4px;
+    padding: 12px 16px;
+    max-width: 230px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 20;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+  }
+  .tooltip.visible { opacity: 1; }
+  .tooltip .tt-name {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold-light);
+    margin-bottom: 3px;
+    display: block;
+  }
+  .tooltip .tt-zone {
+    font-size: 10px;
+    color: var(--ash);
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif;
+  }
+  .tooltip .tt-desc {
+    font-size: 12px;
+    color: var(--parchment);
+    line-height: 1.5;
+    opacity: 0.85;
+  }
+  .tooltip .tt-connects {
+    font-size: 10px;
+    color: var(--gold);
+    margin-top: 7px;
+    line-height: 1.4;
+    border-top: 1px solid rgba(196,169,106,0.2);
+    padding-top: 6px;
+  }
+
+  /* Legend below map */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2.5rem;
+    margin-top: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(196,169,106,0.15);
+    border-radius: 4px;
+  }
+
+  .legend-group h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+    color: var(--parchment);
+    opacity: 0.8;
+  }
+
+  .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .line-swatch {
+    width: 32px;
+    height: 3px;
+    flex-shrink: 0;
+  }
+
+  /* Faction pins section */
+  .factions {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+
+  .faction-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(196,169,106,0.15);
+    border-radius: 4px;
+    padding: 1rem;
+  }
+
+  .faction-card .player {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 3px;
+  }
+
+  .faction-card .faction-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--parchment);
+    margin-bottom: 4px;
+  }
+
+  .faction-card .faction-desc {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: var(--ash);
+    line-height: 1.4;
+  }
+
+  .battles-remaining {
+    font-size: 0.72rem;
+    color: var(--gold);
+    margin-top: 8px;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.05em;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(196,169,106,0.15);
+    font-size: 0.75rem;
+    color: var(--ash);
+    opacity: 0.6;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="sector-label">The Midnight Sector · Campaign Map</div>
+    <h1>Dreadholme</h1>
+    <div class="subtitle">Hive City of the Midnight Sector — Theatre of War</div>
+  </header>
+
+  <div class="map-wrap">
+    <svg viewBox="0 0 760 620" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- CONNECTION LINES (drawn under hexes) -->
+
+    <!-- ROADS (solid, warm grey) -->
+    <line x1="212" y1="88" x2="292" y2="88" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="372" y1="88" x2="412" y2="88" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="172" y1="121" x2="172" y2="154" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="370" y1="154" x2="412" y2="154" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="152" y1="187" x2="132" y2="220" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="252" y1="187" x2="212" y2="220" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="332" y1="187" x2="292" y2="220" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="412" y1="187" x2="412" y2="220" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="192" y1="253" x2="172" y2="286" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="392" y1="253" x2="352" y2="286" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="232" y1="319" x2="192" y2="352" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="432" y1="319" x2="412" y2="352" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="172" y1="385" x2="212" y2="418" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="332" y1="385" x2="292" y2="418" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="192" y1="451" x2="172" y2="484" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="292" y1="451" x2="252" y2="484" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- MAGLEV (dashed amber) -->
+    <polyline points="332,88 252,154 252,253 252,319 252,385 252,451" fill="none" stroke="#8a6020" stroke-width="2.2" stroke-dasharray="7,3" stroke-linecap="round"/>
+    <!-- maglev label -->
+    <text x="228" y="220" font-size="8" fill="#8a6020" text-anchor="middle" transform="rotate(-90,228,220)" font-family="Cinzel, serif" letter-spacing="1">MAGLEV</text>
+
+    <!-- SECRET TUNNELS (dotted teal/green) -->
+    <path d="M292,253 Q220,310 214,352" fill="none" stroke="#1a5c40" stroke-width="1.8" stroke-dasharray="3,5" stroke-linecap="round"/>
+    <path d="M412,253 Q380,270 352,286 Q310,310 252,319" fill="none" stroke="#1a5c40" stroke-width="1.8" stroke-dasharray="3,5" stroke-linecap="round"/>
+
+    <!-- === OUTER RING — Ash Wastes === -->
+    <g class="hex" data-name="The Bleached Reach" data-zone="Ash Wastes" data-type="Wasteland" data-desc="Open ash flats. Choking dust, no shelter. Nothing moves here that doesn't want to disappear." data-connects="Soot Gate only">
+      <polygon points="113,55 151,55 170,88 151,121 113,121 94,88" fill="#3a3830" fill-opacity="0.7" stroke="#6a6560" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="132" y="83" fill="#c8c4b8" font-family="Cinzel,serif">Bleached Reach</text>
+      <text font-size="7.5" text-anchor="middle" x="132" y="95" fill="#8a8880" font-family="Crimson Text,serif" font-style="italic">Wasteland</text>
+    </g>
+
+    <g class="hex" data-name="Soot Gate" data-zone="Outer Ring" data-type="Landing Zone" data-desc="Fortified drop-zone on the northern approach. Blast craters still smoking. Whoever holds this controls reinforcements from orbit." data-connects="Ashroad Terminus · Cinderfields · Bleached Reach">
+      <polygon points="193,55 231,55 250,88 231,121 193,121 174,88" fill="#3a2808" fill-opacity="0.8" stroke="#8a6020" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="212" y="83" fill="#e8c878" font-family="Cinzel,serif">Soot Gate</text>
+      <text font-size="7.5" text-anchor="middle" x="212" y="95" fill="#a88840" font-family="Crimson Text,serif" font-style="italic">Landing zone</text>
+    </g>
+
+    <g class="hex" data-name="Ashroad Terminus" data-zone="Outer Ring" data-type="Transit Hub" data-desc="Central road junction and maglev station. Nothing moves in or out of the hive without passing through here." data-connects="Soot Gate · Grimward Outpost · Spirewatch Station (maglev)">
+      <polygon points="273,55 311,55 330,88 311,121 273,121 254,88" fill="#3a2808" fill-opacity="0.8" stroke="#8a6020" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="292" y="83" fill="#e8c878" font-family="Cinzel,serif">Ashroad Terminus</text>
+      <text font-size="7.5" text-anchor="middle" x="292" y="95" fill="#a88840" font-family="Crimson Text,serif" font-style="italic">Transit hub</text>
+    </g>
+
+    <g class="hex" data-name="Grimward Outpost" data-zone="Outer Ring" data-type="Armoury" data-desc="Decommissioned Guard outpost. Weapons caches and vehicle bays, largely intact. Someone has been supplying themselves here quietly." data-connects="Ashroad Terminus · Slag Trenches">
+      <polygon points="353,55 391,55 410,88 391,121 353,121 334,88" fill="#3a2808" fill-opacity="0.8" stroke="#8a6020" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="372" y="83" fill="#e8c878" font-family="Cinzel,serif">Grimward Outpost</text>
+      <text font-size="7.5" text-anchor="middle" x="372" y="95" fill="#a88840" font-family="Crimson Text,serif" font-style="italic">Armoury</text>
+    </g>
+
+    <g class="hex" data-name="The Smothered Moors" data-zone="Ash Wastes" data-type="Wasteland" data-desc="Fog-choked scrubland beyond the eastern flank. No roads. Things move through here that do not show on auspex." data-connects="No connections — impassable without guides">
+      <polygon points="433,55 471,55 490,88 471,121 433,121 414,88" fill="#3a3830" fill-opacity="0.7" stroke="#6a6560" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="452" y="83" fill="#c8c4b8" font-family="Cinzel,serif">Smothered Moors</text>
+      <text font-size="7.5" text-anchor="middle" x="452" y="95" fill="#8a8880" font-family="Crimson Text,serif" font-style="italic">Wasteland</text>
+    </g>
+
+    <!-- Row 2 -->
+    <g class="hex" data-name="The Cinderfields" data-zone="Outer Ring" data-type="Spoil" data-desc="Burned-out manufactory sprawl. Toxic runoff, collapsed floors. Death Guard have seeded something in the rubble." data-connects="Soot Gate · Hab Mortis">
+      <polygon points="153,121 191,121 210,154 191,187 153,187 134,154" fill="#3a2808" fill-opacity="0.8" stroke="#8a6020" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="172" y="149" fill="#e8c878" font-family="Cinzel,serif">Cinderfields</text>
+      <text font-size="7.5" text-anchor="middle" x="172" y="161" fill="#a88840" font-family="Crimson Text,serif" font-style="italic">Spoil</text>
+    </g>
+
+    <g class="hex" data-name="Spirewatch Station" data-zone="Outer Ring" data-type="Auspex Array" data-desc="Sensor and communications tower. Whoever holds it sees all movement in the middle ring and can jam signals across three zones." data-connects="Ashroad Terminus · Canticle Refinery (road) · Weeping Basilica (maglev)">
+      <polygon points="233,121 271,121 290,154 271,187 233,187 214,154" fill="#3a2808" fill-opacity="0.8" stroke="#8a6020" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="252" y="149" fill="#e8c878" font-family="Cinzel,serif">Spirewatch Station</text>
+      <text font-size="7.5" text-anchor="middle" x="252" y="161" fill="#a88840" font-family="Crimson Text,serif" font-style="italic">Auspex array</text>
+    </g>
+
+    <g class="hex" data-name="Port Mournival" data-zone="Outer Ring" data-type="Landing Zone" data-desc="Ruined secondary spaceport. Two landing pads still functional. Ben's Breacher teams are inbound here." data-connects="Sump Gate Ossian · Slag Trenches">
+      <polygon points="313,121 351,121 370,154 351,187 313,187 294,154" fill="#3a2808" fill-opacity="0.8" stroke="#8a6020" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="332" y="149" fill="#e8c878" font-family="Cinzel,serif">Port Mournival</text>
+      <text font-size="7.5" text-anchor="middle" x="332" y="161" fill="#a88840" font-family="Crimson Text,serif" font-style="italic">Landing zone</text>
+    </g>
+
+    <g class="hex" data-name="The Slag Trenches" data-zone="Outer Ring" data-type="Spoil" data-desc="Collapsed mining works and slag heaps. Riddled with unofficial tunnels. Rumoured underhive access nobody has mapped." data-connects="Grimward Outpost · Port Mournival · Sunderhive Sump District">
+      <polygon points="393,121 431,121 450,154 431,187 393,187 374,154" fill="#3a2808" fill-opacity="0.8" stroke="#8a6020" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="412" y="149" fill="#e8c878" font-family="Cinzel,serif">Slag Trenches</text>
+      <text font-size="7.5" text-anchor="middle" x="412" y="161" fill="#a88840" font-family="Crimson Text,serif" font-style="italic">Spoil</text>
+    </g>
+
+    <!-- === MIDDLE RING === -->
+    <g class="hex" data-name="Hab Mortis" data-zone="Middle Ring" data-type="Habs" data-desc="Overcrowded residential blocks, drainage failed, walls weeping. Nurgle worship spreading in secret amongst the desperate." data-connects="Cinderfields · Canticle Refinery">
+      <polygon points="113,187 151,187 170,220 151,253 113,253 94,220" fill="#0c2e20" fill-opacity="0.85" stroke="#1a5c40" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="132" y="216" fill="#7ac4a0" font-family="Cinzel,serif">Hab Mortis</text>
+      <text font-size="7.5" text-anchor="middle" x="132" y="228" fill="#3a8c60" font-family="Crimson Text,serif" font-style="italic">Habs</text>
+    </g>
+
+    <g class="hex" data-name="The Canticle Refinery" data-zone="Middle Ring" data-type="Energy Plant" data-desc="Promethium processing plant. Still operational. Powers half the hive's lighting and heating. If it burns, Dreadholme goes dark." data-connects="Hab Mortis · Spirewatch Station · Manufact. Valdrek">
+      <polygon points="193,187 231,187 250,220 231,253 193,253 174,220" fill="#0c2e20" fill-opacity="0.85" stroke="#1a5c40" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="212" y="216" fill="#7ac4a0" font-family="Cinzel,serif">Canticle Refinery</text>
+      <text font-size="7.5" text-anchor="middle" x="212" y="228" fill="#3a8c60" font-family="Crimson Text,serif" font-style="italic">Energy plant</text>
+    </g>
+
+    <g class="hex" data-name="Sump Gate Ossian" data-zone="Middle Ring" data-type="Underhive Access" data-desc="Ancient gate into the deepest underhive. Pre-Imperial architecture. The Aeldari know what is beneath it. Others only suspect." data-connects="Port Mournival · Sunderhive Sump District · secret tunnel to Underspire Mouth">
+      <polygon points="273,187 311,187 330,220 311,253 273,253 254,220" fill="#0c2e20" fill-opacity="0.85" stroke="#1a5c40" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="292" y="216" fill="#7ac4a0" font-family="Cinzel,serif">Sump Gate Ossian</text>
+      <text font-size="7.5" text-anchor="middle" x="292" y="228" fill="#3a8c60" font-family="Crimson Text,serif" font-style="italic">Underhive access</text>
+    </g>
+
+    <g class="hex" data-name="Sunderhive Sump District" data-zone="Middle Ring" data-type="Slums" data-desc="The festering lower city. Black markets, debt and allegiances traded in equal measure. Sam's Chaos Marines move freely here. Nobody asks questions." data-connects="Slag Trenches · Sump Gate Ossian · Vaultways · tunnel network">
+      <polygon points="353,187 391,187 410,220 391,253 353,253 334,220" fill="#0c2e20" fill-opacity="0.85" stroke="#1a5c40" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="372" y="212" fill="#7ac4a0" font-family="Cinzel,serif">Sunderhive Sump</text>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="372" y="223" fill="#7ac4a0" font-family="Cinzel,serif">District</text>
+      <text font-size="7.5" text-anchor="middle" x="372" y="235" fill="#3a8c60" font-family="Crimson Text,serif" font-style="italic">Slums</text>
+    </g>
+
+    <!-- Row 4 -->
+    <g class="hex" data-name="Manufactorum Valdrek" data-zone="Middle Ring" data-type="Armoury" data-desc="Vast cold forge named for a hero of a forgotten war. Death Guard use it as a staging point. Weapons stockpiled here for decades, untouched." data-connects="Canticle Refinery · Weeping Basilica">
+      <polygon points="153,253 191,253 210,286 191,319 153,319 134,286" fill="#0c2e20" fill-opacity="0.85" stroke="#1a5c40" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="172" y="282" fill="#7ac4a0" font-family="Cinzel,serif">Manufact. Valdrek</text>
+      <text font-size="7.5" text-anchor="middle" x="172" y="294" fill="#3a8c60" font-family="Crimson Text,serif" font-style="italic">Armoury</text>
+    </g>
+
+    <g class="hex" data-name="The Weeping Basilica" data-zone="Middle Ring" data-type="Plague Shrine" data-desc="Cathedral of the God-Emperor, now defiled. Plague banners hang from the nave. Matt and James both want dominion here — it cannot serve two masters." data-connects="Manufact. Valdrek · Vaultways · Chokechain · maglev line">
+      <polygon points="233,253 271,253 290,286 271,319 233,319 214,286" fill="#0c2e20" fill-opacity="0.85" stroke="#1a5c40" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="252" y="282" fill="#7ac4a0" font-family="Cinzel,serif">Weeping Basilica</text>
+      <text font-size="7.5" text-anchor="middle" x="252" y="294" fill="#3a8c60" font-family="Crimson Text,serif" font-style="italic">Plague shrine</text>
+    </g>
+
+    <g class="hex" data-name="The Vaultways" data-zone="Middle Ring" data-type="Tunnel Network" data-desc="The mapped portion of the underhive tunnel web. Movement here is fast but dangerous. Connects to places not on any official chart." data-connects="Sunderhive Sump · Weeping Basilica · Chokechain (tunnel) · Precinct Nox (tunnel)">
+      <polygon points="313,253 351,253 370,286 351,319 313,319 294,286" fill="#0c2e20" fill-opacity="0.85" stroke="#1a5c40" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="332" y="282" fill="#7ac4a0" font-family="Cinzel,serif">The Vaultways</text>
+      <text font-size="7.5" text-anchor="middle" x="332" y="294" fill="#3a8c60" font-family="Crimson Text,serif" font-style="italic">Tunnel network</text>
+    </g>
+
+    <g class="hex" data-name="Precinct Nox" data-zone="Middle Ring" data-type="Command Post" data-desc="Last functioning Arbites station. Inquisitor Corina operates from here. Fortified, surveilled, and very aware of how surrounded it is." data-connects="Sunderhive Sump · Ironblack Quarter · tunnel network">
+      <polygon points="393,253 431,253 450,286 431,319 393,319 374,286" fill="#0c2e20" fill-opacity="0.85" stroke="#1a5c40" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="412" y="282" fill="#7ac4a0" font-family="Cinzel,serif">Precinct Nox</text>
+      <text font-size="7.5" text-anchor="middle" x="412" y="294" fill="#3a8c60" font-family="Crimson Text,serif" font-style="italic">Command post</text>
+    </g>
+
+    <!-- === INNER RING === -->
+    <g class="hex" data-name="The Chokechain" data-zone="Inner City" data-type="Transit Choke" data-desc="The single road bridge between outer and inner hive. Blow it and you strand armies. Hold it and you dictate the pace of the war." data-connects="Weeping Basilica · Vigil Towers · tunnel from Vaultways">
+      <polygon points="153,319 191,319 210,352 191,385 153,385 134,352" fill="#1e1640" fill-opacity="0.9" stroke="#4a3880" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="172" y="348" fill="#a090e0" font-family="Cinzel,serif">The Chokechain</text>
+      <text font-size="7.5" text-anchor="middle" x="172" y="360" fill="#6050a8" font-family="Crimson Text,serif" font-style="italic">Transit choke</text>
+    </g>
+
+    <g class="hex" data-name="Underspire Mouth" data-zone="Inner City" data-type="Underhive Access" data-desc="The deepest known entrance to the Underspire. Ancient beyond reckoning. The maglev terminates here. Nobody rides to this stop willingly." data-connects="Chokechain · Pallid Concourse · maglev terminal · secret tunnel from Sump Gate Ossian">
+      <polygon points="233,319 271,319 290,352 271,385 233,385 214,352" fill="#1e1640" fill-opacity="0.9" stroke="#4a3880" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="252" y="348" fill="#a090e0" font-family="Cinzel,serif">Underspire Mouth</text>
+      <text font-size="7.5" text-anchor="middle" x="252" y="360" fill="#6050a8" font-family="Crimson Text,serif" font-style="italic">Underhive access</text>
+    </g>
+
+    <g class="hex" data-name="Crestfall Precinct" data-zone="Inner City" data-type="Hab District" data-desc="Former noble quarter, abandoned by the wealthy. Imperial iconography on every wall, most defaced. Civilians still shelter here in fear." data-connects="Ironblack Quarter · Pallid Concourse">
+      <polygon points="313,319 351,319 370,352 351,385 313,385 294,352" fill="#1e1640" fill-opacity="0.9" stroke="#4a3880" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="332" y="348" fill="#a090e0" font-family="Cinzel,serif">Crestfall Precinct</text>
+      <text font-size="7.5" text-anchor="middle" x="332" y="360" fill="#6050a8" font-family="Crimson Text,serif" font-style="italic">Hab district</text>
+    </g>
+
+    <g class="hex" data-name="The Ironblack Quarter" data-zone="Inner City" data-type="Armoury" data-desc="Fortified commercial zone, sealed vaults beneath it. Whoever breaks in finds enough weapons to arm a small army. Multiple factions already trying." data-connects="Precinct Nox · Crestfall Precinct">
+      <polygon points="393,319 431,319 450,352 431,385 393,385 374,352" fill="#1e1640" fill-opacity="0.9" stroke="#4a3880" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="412" y="348" fill="#a090e0" font-family="Cinzel,serif">Ironblack Quarter</text>
+      <text font-size="7.5" text-anchor="middle" x="412" y="360" fill="#6050a8" font-family="Crimson Text,serif" font-style="italic">Armoury</text>
+    </g>
+
+    <!-- Row 6 -->
+    <g class="hex" data-name="The Vigil Towers" data-zone="Inner City" data-type="Power Relay" data-desc="Six watchtowers, each housing a power relay node. Take them all and you control the hive void shield grid. Take one and you blind a sector." data-connects="Chokechain · Undying Watch">
+      <polygon points="193,385 231,385 250,418 231,451 193,451 174,418" fill="#1e1640" fill-opacity="0.9" stroke="#4a3880" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="212" y="414" fill="#a090e0" font-family="Cinzel,serif">Vigil Towers</text>
+      <text font-size="7.5" text-anchor="middle" x="212" y="426" fill="#6050a8" font-family="Crimson Text,serif" font-style="italic">Power relay</text>
+    </g>
+
+    <g class="hex" data-name="The Pallid Concourse" data-zone="Inner City" data-type="Slums" data-desc="Grand processional avenue, now a shanty camp of the displaced. Plague flies circle overhead. The dying line both sides of the road." data-connects="Underspire Mouth · Crestfall Precinct · Tenebris Prime">
+      <polygon points="273,385 311,385 330,418 311,451 273,451 254,418" fill="#1e1640" fill-opacity="0.9" stroke="#4a3880" stroke-width="0.8"/>
+      <text font-size="9" font-weight="500" text-anchor="middle" x="292" y="414" fill="#a090e0" font-family="Cinzel,serif">Pallid Concourse</text>
+      <text font-size="7.5" text-anchor="middle" x="292" y="426" fill="#6050a8" font-family="Crimson Text,serif" font-style="italic">Slums</text>
+    </g>
+
+    <!-- === THE SPIRE === -->
+    <g class="hex" data-name="The Undying Watch" data-zone="The Spire" data-type="Fortress-Cathedral" data-desc="Seat of planetary power. A fortress-cathedral older than the Imperium's reach to this sector. Taking this means owning Dreadholme." data-connects="Vigil Towers · Tenebris Prime">
+      <polygon points="153,451 191,451 210,484 191,517 153,517 134,484" fill="#2a1820" fill-opacity="0.95" stroke="#8a2020" stroke-width="1.2"/>
+      <text font-size="9" font-weight="600" text-anchor="middle" x="172" y="480" fill="#e8b0a0" font-family="Cinzel,serif">Undying Watch</text>
+      <text font-size="7.5" text-anchor="middle" x="172" y="492" fill="#a06050" font-family="Crimson Text,serif" font-style="italic">Fortress-cathedral</text>
+    </g>
+
+    <g class="hex" data-name="Tenebris Prime" data-zone="The Spire" data-type="Command Centre" data-desc="Administrative heart of the Midnight Sector. Broadcast arrays, void shield controls, sector-wide communication. The prize above all prizes." data-connects="Undying Watch · Pallid Concourse">
+      <polygon points="233,451 271,451 290,484 271,517 233,517 214,484" fill="#2a1820" fill-opacity="0.95" stroke="#8a2020" stroke-width="1.2"/>
+      <text font-size="9" font-weight="600" text-anchor="middle" x="252" y="480" fill="#e8b0a0" font-family="Cinzel,serif">Tenebris Prime</text>
+      <text font-size="7.5" text-anchor="middle" x="252" y="492" fill="#a06050" font-family="Crimson Text,serif" font-style="italic">Command centre</text>
+    </g>
+
+    <!-- LEGEND PANEL -->
+    <rect x="498" y="42" width="245" height="310" rx="4" fill="#0e0c0a" fill-opacity="0.85" stroke="#4a3820" stroke-width="0.8"/>
+    <text x="620" y="65" text-anchor="middle" font-size="11" font-family="Cinzel,serif" fill="#c4a96a" letter-spacing="1">MAP KEY</text>
+
+    <text x="510" y="86" font-size="8" font-family="Cinzel,serif" fill="#6a6040" letter-spacing="1">ZONES</text>
+    <rect x="510" y="93" width="12" height="12" rx="2" fill="#2a1820" fill-opacity="0.95" stroke="#8a2020" stroke-width="0.8"/>
+    <text x="528" y="103" font-size="10" font-family="Crimson Text,serif" fill="#c8c0b0">The Spire</text>
+    <rect x="510" y="111" width="12" height="12" rx="2" fill="#1e1640" fill-opacity="0.9" stroke="#4a3880" stroke-width="0.8"/>
+    <text x="528" y="121" font-size="10" font-family="Crimson Text,serif" fill="#c8c0b0">Inner city</text>
+    <rect x="510" y="129" width="12" height="12" rx="2" fill="#0c2e20" fill-opacity="0.85" stroke="#1a5c40" stroke-width="0.8"/>
+    <text x="528" y="139" font-size="10" font-family="Crimson Text,serif" fill="#c8c0b0">Middle ring / underhive</text>
+    <rect x="510" y="147" width="12" height="12" rx="2" fill="#3a2808" fill-opacity="0.8" stroke="#8a6020" stroke-width="0.8"/>
+    <text x="528" y="157" font-size="10" font-family="Crimson Text,serif" fill="#c8c0b0">Outer / industrial</text>
+    <rect x="510" y="165" width="12" height="12" rx="2" fill="#3a3830" fill-opacity="0.7" stroke="#6a6560" stroke-width="0.8"/>
+    <text x="528" y="175" font-size="10" font-family="Crimson Text,serif" fill="#c8c0b0">Ash wastes</text>
+
+    <text x="510" y="198" font-size="8" font-family="Cinzel,serif" fill="#6a6040" letter-spacing="1">CONNECTIONS</text>
+    <line x1="510" y1="211" x2="548" y2="211" stroke="#6a6560" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="554" y="215" font-size="10" font-family="Crimson Text,serif" fill="#c8c0b0">Road</text>
+    <line x1="510" y1="229" x2="548" y2="229" stroke="#8a6020" stroke-width="2" stroke-dasharray="6,3"/>
+    <text x="554" y="233" font-size="10" font-family="Crimson Text,serif" fill="#c8c0b0">Maglev line</text>
+    <line x1="510" y1="247" x2="548" y2="247" stroke="#1a5c40" stroke-width="1.8" stroke-dasharray="3,5"/>
+    <text x="554" y="251" font-size="10" font-family="Crimson Text,serif" fill="#c8c0b0">Secret tunnel</text>
+
+    <text x="510" y="275" font-size="8" font-family="Cinzel,serif" fill="#6a6040" letter-spacing="1">BATTLES</text>
+    <text x="510" y="291" font-size="10" font-family="Crimson Text,serif" fill="#c8c0b0">Max 10 per player</text>
+    <text x="510" y="306" font-size="10" font-family="Crimson Text,serif" fill="#c8c0b0">~50 total engagements</text>
+    <text x="510" y="321" font-size="10" font-family="Crimson Text,serif" fill="#c8c0b0" font-style="italic">Hover any hex for detail</text>
+
+    <!-- Compass -->
+    <g transform="translate(626,530)">
+      <line x1="0" y1="-16" x2="0" y2="16" stroke="#4a3820" stroke-width="1"/>
+      <line x1="-16" y1="0" x2="16" y2="0" stroke="#4a3820" stroke-width="1"/>
+      <text x="0" y="-20" text-anchor="middle" font-size="9" font-family="Cinzel,serif" fill="#6a5830">N</text>
+    </g>
+
+    </svg>
+
+    <div class="tooltip" id="tooltip">
+      <span class="tt-name" id="tt-name"></span>
+      <div class="tt-zone" id="tt-zone"></div>
+      <span class="tt-desc" id="tt-desc"></span>
+      <div class="tt-connects" id="tt-connects"></div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-group">
+      <h3>Site types</h3>
+      <div class="legend-item">Landing Zone — orbital reinforcement points</div>
+      <div class="legend-item">Energy Plant — powers the hive systems</div>
+      <div class="legend-item">Armoury — weapons and materiel</div>
+      <div class="legend-item">Transit Hub / Choke — controls movement</div>
+    </div>
+    <div class="legend-group">
+      <h3>Site types (cont.)</h3>
+      <div class="legend-item">Auspex Array — intelligence and jamming</div>
+      <div class="legend-item">Underhive Access — deep routes below</div>
+      <div class="legend-item">Command Post / Centre — command assets</div>
+      <div class="legend-item">Power Relay — void shield grid nodes</div>
+    </div>
+    <div class="legend-group">
+      <h3>Generic zones</h3>
+      <div class="legend-item">Habs — overcrowded residential</div>
+      <div class="legend-item">Slums — lawless, contested, ungoverned</div>
+      <div class="legend-item">Spoil — ruined industrial wasteland</div>
+      <div class="legend-item">Wasteland — impassable ash flats</div>
+    </div>
+  </div>
+
+  <!-- Factions -->
+  <div class="factions">
+    <div class="faction-card">
+      <div class="player">Jim / Chenstar</div>
+      <div class="faction-name">Aeldari</div>
+      <div class="faction-desc">Ancient, patient, watching from the webway.</div>
+      <div class="battles-remaining">⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡ 10 battles</div>
+    </div>
+    <div class="faction-card">
+      <div class="player">Matt</div>
+      <div class="faction-name">Death Guard · Nurgle</div>
+      <div class="faction-desc">Rituals, plague, and a Greater Unclean One in service.</div>
+      <div class="battles-remaining">⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡ 10 battles</div>
+    </div>
+    <div class="faction-card">
+      <div class="player">Ben</div>
+      <div class="faction-name">Imperial Agents</div>
+      <div class="faction-desc">Inquisitor Corina's retinue. Breacher teams in Warp transit.</div>
+      <div class="battles-remaining">⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡ 10 battles</div>
+    </div>
+    <div class="faction-card">
+      <div class="player">Sam</div>
+      <div class="faction-name">Chaos Space Marines</div>
+      <div class="faction-desc">Heretic Astartes. Allegiances and objectives unclear.</div>
+      <div class="battles-remaining">⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡ 10 battles</div>
+    </div>
+    <div class="faction-card">
+      <div class="player">James</div>
+      <div class="faction-name">Death Guard · Nurgle</div>
+      <div class="faction-desc">Second servant of the Plague God. Ally or rival to Matt.</div>
+      <div class="battles-remaining">⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡ 10 battles</div>
+    </div>
+  </div>
+
+  <footer>
+    Dreadholme · Midnight Sector · Campaign Record · In the grim darkness of the far future, there is only war.
+  </footer>
+
+</div>
+
+<script>
+const tooltip = document.getElementById('tooltip');
+const ttName = document.getElementById('tt-name');
+const ttZone = document.getElementById('tt-zone');
+const ttDesc = document.getElementById('tt-desc');
+const ttConnects = document.getElementById('tt-connects');
+const mapWrap = document.querySelector('.map-wrap');
+
+document.querySelectorAll('.hex').forEach(hex => {
+  hex.addEventListener('mouseenter', () => {
+    ttName.textContent = hex.dataset.name;
+    ttZone.textContent = hex.dataset.zone + ' · ' + hex.dataset.type;
+    ttDesc.textContent = hex.dataset.desc;
+    ttConnects.textContent = hex.dataset.connects ? 'Connects to: ' + hex.dataset.connects : '';
+    tooltip.classList.add('visible');
+  });
+  hex.addEventListener('mousemove', (e) => {
+    const rect = mapWrap.getBoundingClientRect();
+    let x = e.clientX - rect.left + 14;
+    let y = e.clientY - rect.top + 14;
+    if (x + 240 > rect.width) x = x - 264;
+    if (y + 170 > rect.height) y = y - 170;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  });
+  hex.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('visible');
+  });
+});
+</script>
+</body>
+</html>
