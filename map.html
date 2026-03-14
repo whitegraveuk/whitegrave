@@ -3,133 +3,130 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dreadholme — Campaign Hex Map</title>
+<title>Dreadholme — Theatre Map // Whitegrave</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --ink: #1a1510;
-    --parchment: #f0e8d8;
-    --parchment-dark: #e0d4bc;
-    --gold: #8a6e3a;
-    --gold-light: #c4a96a;
-    --purple-deep: #2a1f4a;
-    --purple-mid: #4a3880;
-    --teal-deep: #0a3d2e;
-    --amber-deep: #4a2e08;
-    --ash: #7a7870;
-    --blood: #6b2020;
+    --steel:#0d1117;--steel-mid:#161c26;--steel-light:#1e2736;--steel-border:#2a3545;
+    --steel-border-bright:#3d5068;--amber:#c8891a;--amber-bright:#e8a020;--amber-dim:#7a5010;
+    --text-primary:#c8d4e0;--text-secondary:#7a8fa8;--text-dim:#4a5f75;
+    --red:#8a1f1f;--green-dim:#1a3d2a;--green:#2a6b42;
+    --caslon:'Caslon Antique','CaslonAntique','Caslon Old Face','Libre Baskerville','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+    --mono:'Share Tech Mono',monospace;--body:'Barlow',sans-serif;
   }
 
+  *{box-sizing:border-box;margin:0;padding:0;}
+
   body {
-    background: var(--ink);
-    color: var(--parchment);
-    font-family: 'Crimson Text', Georgia, serif;
+    background: var(--steel);
+    color: var(--text-primary);
+    font-family: var(--body);
+    font-size: 14px;
+    line-height: 1.6;
     min-height: 100vh;
-    overflow-x: hidden;
   }
 
   /* Back nav */
   .back-nav {
-    background: #0e0c0a;
-    border-bottom: 1px solid rgba(196,169,106,0.2);
-    padding: 10px 24px;
+    background: var(--steel-mid);
+    border-bottom: 1px solid var(--steel-border);
+    padding: 10px 28px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     position: relative;
     z-index: 2;
   }
 
+  .back-nav::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--amber) 0px, var(--amber) 8px, transparent 8px, transparent 12px);
+  }
+
   .back-nav a {
-    font-family: 'Cinzel', serif;
+    font-family: var(--mono);
     font-size: 10px;
-    color: rgba(196,169,106,0.7);
+    color: var(--amber);
     text-decoration: none;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    letter-spacing: 0.12em;
     transition: color 0.15s;
   }
 
-  .back-nav a:hover { color: #c4a96a; }
+  .back-nav a:hover { color: var(--amber-bright); }
 
-  .back-nav-sep {
-    font-size: 10px;
-    color: rgba(196,169,106,0.3);
-  }
+  .back-nav-sep { font-family: var(--mono); font-size: 10px; color: var(--text-dim); }
 
   .back-nav-current {
-    font-family: 'Cinzel', serif;
+    font-family: var(--mono);
     font-size: 10px;
-    color: rgba(196,169,106,0.4);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
-
-  /* Subtle noise texture overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
   }
 
   .page {
-    position: relative;
-    z-index: 1;
     max-width: 1100px;
     margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
+    padding: 0 24px 64px;
   }
 
-  /* Header */
-  header {
-    text-align: center;
-    padding: 2.5rem 0 2rem;
-    border-bottom: 1px solid rgba(196,169,106,0.3);
-    margin-bottom: 2rem;
+  /* Page header */
+  .page-header {
+    background: var(--steel-mid);
+    border-bottom: 2px solid var(--amber);
+    padding: 20px 28px 16px;
+    margin: 0 -24px 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
   }
 
-  .sector-label {
-    font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.35em;
-    color: var(--gold-light);
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-    opacity: 0.8;
+  .page-header-left {}
+
+  .map-id {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--amber);
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
   }
 
-  h1 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(2rem, 5vw, 3.2rem);
-    font-weight: 600;
-    color: var(--parchment);
-    letter-spacing: 0.05em;
-    line-height: 1.1;
+  .map-title {
+    font-family: var(--caslon);
+    font-size: 34px;
+    font-weight: 700;
+    color: #e8f0f8;
+    letter-spacing: 0.06em;
+    line-height: 1;
   }
 
-  .subtitle {
-    font-family: 'Crimson Text', serif;
+  .map-sub {
+    font-family: var(--caslon);
+    font-size: 12px;
     font-style: italic;
-    font-size: 1rem;
-    color: var(--gold-light);
-    margin-top: 0.5rem;
-    opacity: 0.85;
+    color: var(--text-secondary);
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+  }
+
+  .map-date {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-align: right;
   }
 
   /* Map container */
   .map-wrap {
     position: relative;
-    background: #0e0c0a;
-    border: 1px solid rgba(196,169,106,0.2);
-    border-radius: 4px;
-    padding: 1rem;
+    background: #080c10;
+    border: 1px solid var(--steel-border);
+    border-left: 3px solid var(--amber-dim);
+    padding: 12px;
   }
 
   .map-wrap svg {
@@ -137,50 +134,56 @@
     width: 100%;
   }
 
-  /* Tooltip */
+  /* Tooltip — restyled to match hub */
   .tooltip {
     position: absolute;
-    background: #1a1510;
-    border: 1px solid rgba(196,169,106,0.4);
-    border-radius: 4px;
-    padding: 12px 16px;
-    max-width: 230px;
+    background: var(--steel-mid);
+    border: 1px solid var(--steel-border-bright);
+    border-left: 2px solid var(--amber);
+    padding: 10px 14px;
+    max-width: 240px;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.15s;
     z-index: 20;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.6);
   }
+
   .tooltip.visible { opacity: 1; }
+
   .tooltip .tt-name {
-    font-family: 'Cinzel', serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gold-light);
-    margin-bottom: 3px;
+    font-family: var(--caslon);
+    font-size: 13px;
+    font-weight: 700;
+    color: #e0eaf5;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
     display: block;
   }
+
   .tooltip .tt-zone {
-    font-size: 10px;
-    color: var(--ash);
-    margin-bottom: 6px;
-    letter-spacing: 0.05em;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--amber-dim);
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    font-family: 'Cinzel', serif;
+    margin-bottom: 6px;
   }
+
   .tooltip .tt-desc {
     font-size: 12px;
-    color: var(--parchment);
+    color: var(--text-secondary);
     line-height: 1.5;
-    opacity: 0.85;
   }
+
   .tooltip .tt-connects {
-    font-size: 10px;
-    color: var(--gold);
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
     margin-top: 7px;
-    line-height: 1.4;
-    border-top: 1px solid rgba(196,169,106,0.2);
+    line-height: 1.5;
+    border-top: 1px solid var(--steel-border);
     padding-top: 6px;
+    letter-spacing: 0.05em;
   }
 
   /* Legend below map */
@@ -188,20 +191,19 @@
     display: flex;
     flex-wrap: wrap;
     gap: 1.5rem 2.5rem;
-    margin-top: 1.5rem;
-    padding: 1.25rem 1.5rem;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(196,169,106,0.15);
-    border-radius: 4px;
+    margin-top: 16px;
+    padding: 16px 20px;
+    background: var(--steel-mid);
+    border: 1px solid var(--steel-border);
   }
 
   .legend-group h3 {
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 0.6rem;
+    color: var(--amber);
+    margin-bottom: 8px;
   }
 
   .legend-item {
@@ -209,9 +211,8 @@
     align-items: center;
     gap: 8px;
     margin-bottom: 5px;
-    font-size: 0.8rem;
-    color: var(--parchment);
-    opacity: 0.8;
+    font-size: 12px;
+    color: var(--text-secondary);
   }
 
   .swatch {
@@ -228,78 +229,62 @@
     flex-shrink: 0;
   }
 
-  /* Faction pins section */
-  .factions {
-    margin-top: 2rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
+  /* Footer */
+  .page-footer {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--steel-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
-  .faction-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(196,169,106,0.15);
-    border-radius: 4px;
-    padding: 1rem;
+  .footer-id {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
   }
 
-  .faction-card .player {
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 3px;
-  }
-
-  .faction-card .faction-name {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--parchment);
-    margin-bottom: 4px;
-  }
-
-  .faction-card .faction-desc {
-    font-size: 0.8rem;
+  .footer-stamp {
+    font-family: var(--caslon);
+    font-size: 12px;
+    color: var(--amber-dim);
+    letter-spacing: 0.1em;
+    border: 1px solid var(--amber-dim);
+    padding: 3px 12px;
+    opacity: 0.7;
     font-style: italic;
-    color: var(--ash);
-    line-height: 1.4;
   }
 
-  .battles-remaining {
-    font-size: 0.72rem;
-    color: var(--gold);
-    margin-top: 8px;
-    font-family: 'Cinzel', serif;
-    letter-spacing: 0.05em;
-  }
-
-  footer {
-    text-align: center;
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(196,169,106,0.15);
-    font-size: 0.75rem;
-    color: var(--ash);
-    opacity: 0.6;
-    font-style: italic;
+  @media(max-width:640px){
+    .page-header { flex-direction: column; gap: 10px; }
+    .map-date { text-align: left; }
+    .back-nav { padding: 10px 16px; }
+    .page { padding: 0 16px 48px; }
   }
 </style>
 </head>
 <body>
+
 <nav class="back-nav">
   <a href="index.html">// WHITEGRAVE</a>
   <span class="back-nav-sep">/</span>
-  <span class="back-nav-current">Theatre Map</span>
+  <span class="back-nav-current">THEATRE MAP</span>
 </nav>
 
 <div class="page">
 
-  <header>
-    <div class="sector-label">The Midnight Sector · Campaign Map</div>
-    <h1>Dreadholme</h1>
-    <div class="subtitle">Hive City of the Midnight Sector — Theatre of War</div>
-  </header>
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="map-id">// DREADHOLME.MIDNIGHT-SECTOR.THEATRE-MAP //</div>
+      <div class="map-title">Dreadholme</div>
+      <div class="map-sub">Hive City &mdash; Midnight Sector &mdash; Theatre of War</div>
+    </div>
+    <div class="map-date">3 140326.M42</div>
+  </div>
 
   <div class="map-wrap">
     <svg viewBox="0 0 760 620" xmlns="http://www.w3.org/2000/svg">
@@ -632,5 +617,39 @@ document.querySelectorAll('.hex').forEach(hex => {
   });
 });
 </script>
+
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-group">
+      <h3>// Site types</h3>
+      <div class="legend-item">Landing Zone &mdash; orbital reinforcement points</div>
+      <div class="legend-item">Energy Plant &mdash; powers hive systems</div>
+      <div class="legend-item">Armoury &mdash; weapons and materiel</div>
+      <div class="legend-item">Transit Hub / Choke &mdash; controls movement</div>
+    </div>
+    <div class="legend-group">
+      <h3>// Site types (cont.)</h3>
+      <div class="legend-item">Auspex Array &mdash; intelligence and jamming</div>
+      <div class="legend-item">Underhive Access &mdash; deep routes below</div>
+      <div class="legend-item">Command Post / Centre &mdash; command assets</div>
+      <div class="legend-item">Power Relay &mdash; void shield grid nodes</div>
+    </div>
+    <div class="legend-group">
+      <h3>// Zones</h3>
+      <div class="legend-item">Habs &mdash; overcrowded residential</div>
+      <div class="legend-item">Slums &mdash; lawless, contested, ungoverned</div>
+      <div class="legend-item">Spoil &mdash; ruined industrial wasteland</div>
+      <div class="legend-item">Wasteland &mdash; impassable ash flats</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-id">// WHITEGRAVE.CAMPAIGN.DOC &middot; DREADHOLME-MAP &middot; 3 140326.M42</div>
+    <div class="footer-stamp">Suffer not the alien to live</div>
+  </div>
+
+</div>
 </body>
 </html>
