@@ -39,11 +39,7 @@
     min-height: 100vh;
   }
 
-  .page {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 0 0 64px;
-  }
+  .page { max-width: 720px; margin: 0 auto; padding: 0 0 64px; }
 
   /* Header */
   .header {
@@ -62,389 +58,132 @@
     background: repeating-linear-gradient(90deg, var(--amber) 0px, var(--amber) 8px, transparent 8px, transparent 12px);
   }
 
-  .header-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
+  .header-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
 
-  .campaign-id {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--amber);
-    letter-spacing: 0.15em;
-    margin-bottom: 6px;
-  }
-
-  .campaign-name {
-    font-family: var(--condensed);
-    font-size: 38px;
-    font-weight: 700;
-    color: #e8f0f8;
-    letter-spacing: 0.08em;
-    line-height: 1;
-    text-transform: uppercase;
-  }
-
-  .campaign-sub {
-    font-family: var(--condensed);
-    font-size: 14px;
-    font-weight: 300;
-    color: var(--text-secondary);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-top: 6px;
-  }
+  .campaign-id { font-family: var(--mono); font-size: 10px; color: var(--amber); letter-spacing: 0.15em; margin-bottom: 6px; }
+  .campaign-name { font-family: var(--condensed); font-size: 38px; font-weight: 700; color: #e8f0f8; letter-spacing: 0.08em; line-height: 1; text-transform: uppercase; }
+  .campaign-sub { font-family: var(--condensed); font-size: 14px; font-weight: 300; color: var(--text-secondary); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 6px; }
 
   .status-block { text-align: right; }
+  .status-pill { display: inline-block; background: var(--green-dim); border: 1px solid var(--green); color: #4caf7a; font-family: var(--mono); font-size: 10px; padding: 3px 12px; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .status-date { display: block; font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em; }
 
-  .status-pill {
-    display: inline-block;
-    background: var(--green-dim);
-    border: 1px solid var(--green);
-    color: #4caf7a;
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 3px 12px;
-    letter-spacing: 0.1em;
-    margin-bottom: 6px;
+  .scan-line { height: 1px; background: linear-gradient(90deg, transparent, var(--amber-dim), transparent); margin: 14px 0 0; opacity: 0.6; }
+
+  /* Wiki nav strip */
+  .wiki-nav {
+    background: var(--steel-light);
+    border-bottom: 1px solid var(--steel-border);
+    padding: 8px 28px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
   }
 
-  .status-date {
-    display: block;
+  .wiki-nav-label {
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-dim);
-    letter-spacing: 0.08em;
+    letter-spacing: 0.15em;
+    margin-right: 8px;
   }
 
-  .scan-line {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--amber-dim), transparent);
-    margin: 14px 0 0;
-    opacity: 0.6;
+  .wiki-nav a {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    padding: 3px 10px;
+    border: 1px solid var(--steel-border);
+    transition: border-color 0.15s, color 0.15s;
   }
+
+  .wiki-nav a:hover { border-color: var(--amber-dim); color: var(--amber); }
 
   /* Sections */
-  .section {
-    padding: 22px 28px;
-    border-bottom: 1px solid var(--steel-border);
-  }
+  .section { padding: 22px 28px; border-bottom: 1px solid var(--steel-border); }
 
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
-  .section-tag {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--amber);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  .section-rule {
-    flex: 1;
-    height: 1px;
-    background: var(--steel-border);
-  }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .section-tag { font-family: var(--mono); font-size: 10px; color: var(--amber); letter-spacing: 0.18em; text-transform: uppercase; white-space: nowrap; }
+  .section-rule { flex: 1; height: 1px; background: var(--steel-border); }
 
   /* Engagement cards */
-  .engagement-card {
-    background: var(--steel-mid);
-    border: 1px solid var(--steel-border);
-    border-left: 3px solid var(--amber);
-    padding: 16px 18px;
-    margin-bottom: 14px;
-  }
-
-  .engagement-title {
-    font-family: var(--condensed);
-    font-size: 18px;
-    font-weight: 600;
-    color: #e0eaf5;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 2px;
-  }
-
-  .engagement-meta {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 0.1em;
-    margin-bottom: 12px;
-  }
+  .engagement-card { background: var(--steel-mid); border: 1px solid var(--steel-border); border-left: 3px solid var(--amber); padding: 16px 18px; margin-bottom: 14px; }
+  .engagement-title { font-family: var(--condensed); font-size: 18px; font-weight: 600; color: #e0eaf5; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+  .engagement-meta { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 12px; }
 
   .sitrep { list-style: none; padding: 0; }
-
-  .sitrep li {
-    padding: 5px 0 5px 20px;
-    position: relative;
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.5;
-    border-bottom: 1px solid var(--steel-border);
-  }
-
+  .sitrep li { padding: 5px 0 5px 20px; position: relative; font-size: 13px; color: var(--text-secondary); line-height: 1.5; border-bottom: 1px solid var(--steel-border); }
   .sitrep li:last-child { border-bottom: none; }
+  .sitrep li::before { content: '//'; position: absolute; left: 0; color: var(--amber-dim); font-family: var(--mono); font-size: 10px; top: 6px; }
 
-  .sitrep li::before {
-    content: '//';
-    position: absolute;
-    left: 0;
-    color: var(--amber-dim);
-    font-family: var(--mono);
-    font-size: 10px;
-    top: 6px;
-  }
+  .intercept { margin-top: 14px; padding: 10px 14px; background: rgba(200,137,26,0.06); border-left: 2px solid var(--amber-dim); font-family: var(--mono); font-size: 11px; color: var(--amber-dim); letter-spacing: 0.04em; line-height: 1.6; }
+  .intercept-label { color: var(--amber); display: block; margin-bottom: 4px; font-size: 10px; letter-spacing: 0.15em; }
 
-  .intercept {
-    margin-top: 14px;
-    padding: 10px 14px;
-    background: rgba(200,137,26,0.06);
-    border-left: 2px solid var(--amber-dim);
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--amber-dim);
-    letter-spacing: 0.04em;
-    line-height: 1.6;
-  }
-
-  .intercept-label {
+  /* Wiki links — inline links within content */
+  a.wiki-link {
     color: var(--amber);
-    display: block;
-    margin-bottom: 4px;
-    font-size: 10px;
-    letter-spacing: 0.15em;
+    text-decoration: none;
+    border-bottom: 1px solid var(--amber-dim);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  a.wiki-link:hover {
+    color: var(--amber-bright);
+    border-color: var(--amber);
   }
 
   /* Roster */
-  .roster-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
+  .roster-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-  .roster-card {
-    background: var(--steel-mid);
-    border: 1px solid var(--steel-border);
-    padding: 14px 16px;
-    position: relative;
-  }
-
-  .roster-card::after {
-    content: '';
-    position: absolute;
-    top: 0; right: 0;
-    width: 0; height: 0;
-    border-style: solid;
-    border-width: 0 14px 14px 0;
-    border-color: transparent var(--steel-border) transparent transparent;
-  }
-
-  .roster-callsign {
-    font-family: var(--condensed);
-    font-size: 16px;
-    font-weight: 700;
-    color: #e0eaf5;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 2px;
-  }
-
-  .roster-faction {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--amber);
-    letter-spacing: 0.12em;
-    margin-bottom: 8px;
-  }
-
-  .roster-note {
-    font-size: 12px;
-    color: var(--text-dim);
-    line-height: 1.4;
-    font-style: italic;
-  }
-
-  .roster-card.unknown {
-    border-style: dashed;
-    opacity: 0.45;
-  }
+  .roster-card { background: var(--steel-mid); border: 1px solid var(--steel-border); padding: 14px 16px; position: relative; }
+  .roster-card::after { content: ''; position: absolute; top: 0; right: 0; width: 0; height: 0; border-style: solid; border-width: 0 14px 14px 0; border-color: transparent var(--steel-border) transparent transparent; }
+  .roster-callsign { font-family: var(--condensed); font-size: 16px; font-weight: 700; color: #e0eaf5; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 2px; }
+  .roster-faction { font-family: var(--mono); font-size: 10px; color: var(--amber); letter-spacing: 0.12em; margin-bottom: 8px; }
+  .roster-note { font-size: 12px; color: var(--text-dim); line-height: 1.4; font-style: italic; }
+  .roster-card.unknown { border-style: dashed; opacity: 0.45; }
 
   /* Persons of Interest */
-  .poi-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--steel-border);
-  }
-
+  .poi-row { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--steel-border); }
   .poi-row:last-child { border-bottom: none; }
 
-  .poi-sigil {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    background: var(--steel-light);
-    border: 1px solid var(--steel-border-bright);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--condensed);
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--amber);
-    letter-spacing: 0.05em;
-  }
+  .poi-sigil { width: 40px; height: 40px; min-width: 40px; background: var(--steel-light); border: 1px solid var(--steel-border-bright); display: flex; align-items: center; justify-content: center; font-family: var(--condensed); font-size: 14px; font-weight: 700; color: var(--amber); letter-spacing: 0.05em; }
+  .poi-name { font-family: var(--condensed); font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1px; }
+  .poi-name a { color: #e0eaf5; text-decoration: none; border-bottom: 1px solid var(--steel-border-bright); transition: color 0.15s, border-color 0.15s; }
+  .poi-name a:hover { color: var(--amber); border-color: var(--amber-dim); }
+  .poi-designation { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 4px; }
+  .poi-intel { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
 
-  .poi-name {
-    font-family: var(--condensed);
-    font-size: 15px;
-    font-weight: 600;
-    color: #e0eaf5;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-
-  .poi-designation {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 0.1em;
-    margin-bottom: 4px;
-  }
-
-  .poi-intel {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.4;
-  }
-
-  .threat-tag {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    padding: 2px 8px;
-    margin-top: 4px;
-  }
-
+  .threat-tag { display: inline-block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; padding: 2px 8px; margin-top: 4px; }
   .threat-hostile { background: rgba(138,31,31,0.3); color: #e05050; border: 1px solid var(--red); }
   .threat-unknown { background: rgba(74,95,117,0.3); color: var(--text-secondary); border: 1px solid var(--steel-border-bright); }
   .threat-asset   { background: rgba(42,107,66,0.3); color: #4caf7a; border: 1px solid var(--green); }
 
   /* Theatres */
-  .theatre-item {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--steel-border);
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-  }
-
+  .theatre-item { padding: 12px 0; border-bottom: 1px solid var(--steel-border); display: flex; gap: 14px; align-items: flex-start; }
   .theatre-item:last-child { border-bottom: none; }
+  .theatre-code { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em; min-width: 40px; padding-top: 2px; }
+  .theatre-name { font-family: var(--condensed); font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+  .theatre-name a { color: #ccd8e8; text-decoration: none; border-bottom: 1px solid var(--steel-border-bright); transition: color 0.15s, border-color 0.15s; }
+  .theatre-name a:hover { color: var(--amber); border-color: var(--amber-dim); }
+  .theatre-note { font-size: 12px; color: var(--text-dim); line-height: 1.4; font-style: italic; margin-bottom: 4px; }
 
-  .theatre-code {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 0.08em;
-    min-width: 40px;
-    padding-top: 2px;
-  }
-
-  .theatre-name {
-    font-family: var(--condensed);
-    font-size: 15px;
-    font-weight: 600;
-    color: #ccd8e8;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 3px;
-  }
-
-  .theatre-note {
-    font-size: 12px;
-    color: var(--text-dim);
-    line-height: 1.4;
-    font-style: italic;
-    margin-bottom: 4px;
-  }
-
-  .theatre-status {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 9px;
-    padding: 2px 8px;
-    letter-spacing: 0.1em;
-  }
-
+  .theatre-status { display: inline-block; font-family: var(--mono); font-size: 9px; padding: 2px 8px; letter-spacing: 0.1em; }
   .status-contested { background: rgba(138,31,31,0.2); color: #e05050; border: 1px solid var(--red); }
   .status-warp      { background: rgba(80,20,100,0.3); color: #b070e0; border: 1px solid #6030a0; }
   .status-unknown   { background: rgba(42,53,69,0.6); color: var(--text-dim); border: 1px solid var(--steel-border); }
 
-  /* Intelligence fragments */
-  .intel-item {
-    padding: 12px 16px;
-    border-left: 2px solid var(--steel-border-bright);
-    margin-bottom: 12px;
-    background: var(--steel-mid);
-  }
-
+  /* Intelligence */
+  .intel-item { padding: 12px 16px; border-left: 2px solid var(--steel-border-bright); margin-bottom: 12px; background: var(--steel-mid); }
   .intel-item:last-child { margin-bottom: 0; }
-
-  .intel-source {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--amber-dim);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 5px;
-    display: block;
-  }
-
-  .intel-text {
-    font-size: 13px;
-    color: var(--text-secondary);
-    font-style: italic;
-    line-height: 1.5;
-  }
+  .intel-source { font-family: var(--mono); font-size: 9px; color: var(--amber-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 5px; display: block; }
+  .intel-text { font-size: 13px; color: var(--text-secondary); font-style: italic; line-height: 1.5; }
 
   /* Footer */
-  .footer {
-    padding: 20px 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .footer-id {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 0.1em;
-  }
-
-  .footer-stamp {
-    font-family: var(--condensed);
-    font-size: 11px;
-    color: var(--amber-dim);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    border: 1px solid var(--amber-dim);
-    padding: 3px 12px;
-    opacity: 0.6;
-  }
+  .footer { padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .footer-id { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; }
+  .footer-stamp { font-family: var(--condensed); font-size: 11px; color: var(--amber-dim); letter-spacing: 0.15em; text-transform: uppercase; border: 1px solid var(--amber-dim); padding: 3px 12px; opacity: 0.6; }
 
   @media (max-width: 540px) {
     .roster-grid { grid-template-columns: 1fr; }
@@ -453,6 +192,7 @@
     .status-block { text-align: left; }
     .section { padding: 18px 16px; }
     .header { padding: 20px 16px 16px; }
+    .wiki-nav { padding: 8px 16px; flex-wrap: wrap; }
     .footer { padding: 16px; }
   }
 </style>
@@ -475,6 +215,14 @@
     <div class="scan-line"></div>
   </div>
 
+  <!-- Wiki navigation strip -->
+  <div class="wiki-nav">
+    <span class="wiki-nav-label">WIKI //</span>
+    <a href="npcs/">Persons of Interest</a>
+    <a href="locations/">Locations</a>
+    <a href="factions/">Factions</a>
+  </div>
+
   <!-- Last Engagement -->
   <div class="section">
     <div class="section-header">
@@ -486,10 +234,10 @@
       <div class="engagement-title">Boarding Action &mdash; The Ascendent</div>
       <div class="engagement-meta">ENGAGEMENT LOG &middot; SHIP-CLASS VESSEL &middot; MANDEVILLE POINT APPROACH</div>
       <ul class="sitrep">
-        <li>Inquisitor Corina rallied her crew and deployed Elite Breacher teams to secure the vessel.</li>
+        <li><a class="wiki-link" href="npcs/inquisitor-corina.html">Inquisitor Corina</a> rallied her crew and deployed Elite Breacher teams to secure the vessel.</li>
         <li>Fighting for the teleportarium proved inconclusive. Agents held critical junctions in the Enginarium &mdash; the Tome-Skull scattered cultists attempting to seize the junction.</li>
         <li>Remaining cultists were put to the sword. Rites of cleansing commenced to purge the taint of Chaos.</li>
-        <li>As the <em>Ascendent</em> reached Mandeville point and translated into the Warp, the Master of the Watch noticed too late that something was wrong. Every psyker aboard began to scream.</li>
+        <li>As the <em>Ascendent</em> reached Mandeville point and translated into the Warp, the <a class="wiki-link" href="npcs/master-of-the-watch.html">Master of the Watch</a> noticed too late that something was wrong. Every psyker aboard began to scream.</li>
       </ul>
       <div class="intercept">
         <span class="intercept-label">// OPEN STRATEGIC QUESTION</span>
@@ -501,10 +249,10 @@
       <div class="engagement-title">Ritual at the Grimoire Draconis</div>
       <div class="engagement-meta">ENGAGEMENT LOG &middot; ARCHEO GAOL OF SAINT SIGISMUND &middot; CHAOS FORCES</div>
       <ul class="sitrep">
-        <li>Forces of Chaos broke the shackles on the Grimoire Draconis, learning the Daemon&rsquo;s true name.</li>
-        <li>They battled a warp entity in the Archeo Gaol of Saint Sigismund to retrieve a Daemon weapon for the ritual.</li>
+        <li>Forces of Chaos broke the shackles on the <a class="wiki-link" href="locations/grimoire-draconis.html">Grimoire Draconis</a>, learning the Daemon&rsquo;s true name.</li>
+        <li>They battled a warp entity in the <a class="wiki-link" href="locations/archeo-gaol.html">Archeo Gaol of Saint Sigismund</a> to retrieve a Daemon weapon for the ritual.</li>
         <li>A lone servant of Nurgle risked and completed the sacrifice amidst skulls and viscera.</li>
-        <li>Corposant glowed, unchecked growth ravaged the site. A Greater Unclean One bellowed and was manifest.</li>
+        <li>Corposant glowed, unchecked growth ravaged the site. <a class="wiki-link" href="npcs/the-manifest-one.html">A Greater Unclean One</a> bellowed and was manifest.</li>
       </ul>
       <div class="intercept" style="border-left-color: #8a1f1f; color: #a04040;">
         <span class="intercept-label" style="color: #b02828;">// THREAT ASSESSMENT</span>
@@ -544,7 +292,7 @@
   </div>
 
   <!-- Persons of Interest -->
-  <div class="section">
+  <div class="section" id="npcs">
     <div class="section-header">
       <span class="section-tag">// Persons of Interest</span>
       <div class="section-rule"></div>
@@ -553,7 +301,7 @@
     <div class="poi-row">
       <div class="poi-sigil">IC</div>
       <div>
-        <div class="poi-name">Inquisitor Corina</div>
+        <div class="poi-name"><a href="npcs/inquisitor-corina.html">Inquisitor Corina</a></div>
         <div class="poi-designation">ORDO UNKNOWN &middot; COMMANDING &mdash; THE ASCENDENT</div>
         <div class="poi-intel">Leads Elite Breacher teams. Employed a Tome-Skull retinue to hold the Enginarium. Currently aboard a Warp-translated vessel with screaming psykers.</div>
         <div class="threat-tag threat-asset">ASSET</div>
@@ -563,7 +311,7 @@
     <div class="poi-row">
       <div class="poi-sigil">GUO</div>
       <div>
-        <div class="poi-name">The Manifest One</div>
+        <div class="poi-name"><a href="npcs/the-manifest-one.html">The Manifest One</a></div>
         <div class="poi-designation">GREATER UNCLEAN ONE &middot; BOUND TO NURGLE COMPACT</div>
         <div class="poi-intel">Summoned via ritual sacrifice at the Grimoire Draconis. True name unknown. Now bound to the Chaos forces operating in theatre.</div>
         <div class="threat-tag threat-hostile">CRITICAL THREAT</div>
@@ -573,7 +321,7 @@
     <div class="poi-row">
       <div class="poi-sigil">??</div>
       <div>
-        <div class="poi-name">The Master of the Watch</div>
+        <div class="poi-name"><a href="npcs/master-of-the-watch.html">The Master of the Watch</a></div>
         <div class="poi-designation">VESSEL SECURITY &middot; THE ASCENDENT</div>
         <div class="poi-intel">Noticed the warp anomaly too late. Current status unknown &mdash; aboard a vessel lost in transit.</div>
         <div class="threat-tag threat-unknown">STATUS UNKNOWN</div>
@@ -582,7 +330,7 @@
   </div>
 
   <!-- Theatres -->
-  <div class="section">
+  <div class="section" id="locations">
     <div class="section-header">
       <span class="section-tag">// Theatres of Operation</span>
       <div class="section-rule"></div>
@@ -591,7 +339,7 @@
     <div class="theatre-item">
       <div class="theatre-code">TH-01</div>
       <div>
-        <div class="theatre-name">The Ascendent</div>
+        <div class="theatre-name"><a href="locations/the-ascendent.html">The Ascendent</a></div>
         <div class="theatre-note">Imperial vessel. Translated into the Warp at Mandeville point following cultist boarding. Psyker crew in crisis. Whereabouts unconfirmed.</div>
         <div class="theatre-status status-warp">WARP TRANSIT</div>
       </div>
@@ -600,7 +348,7 @@
     <div class="theatre-item">
       <div class="theatre-code">TH-02</div>
       <div>
-        <div class="theatre-name">Grimoire Draconis</div>
+        <div class="theatre-name"><a href="locations/grimoire-draconis.html">Grimoire Draconis</a></div>
         <div class="theatre-note">Site of Nurgle ritual. Daemon weapon recovered. Greater Unclean One manifested. Imperials and unbelievers routed. Site considered lost.</div>
         <div class="theatre-status status-contested">CHAOS CONTROLLED</div>
       </div>
@@ -609,7 +357,7 @@
     <div class="theatre-item">
       <div class="theatre-code">TH-03</div>
       <div>
-        <div class="theatre-name">Archeo Gaol of Saint Sigismund</div>
+        <div class="theatre-name"><a href="locations/archeo-gaol.html">Archeo Gaol of Saint Sigismund</a></div>
         <div class="theatre-note">Ancient detention facility. Warp entity present. Chaos forces extracted a bound Daemon weapon from containment.</div>
         <div class="theatre-status status-unknown">STATUS UNKNOWN</div>
       </div>
@@ -654,7 +402,7 @@
   </div>
 
   <div class="footer">
-    <div class="footer-id">// WHITEGRAVE.CAMPAIGN.DOC &middot; REV.02</div>
+    <div class="footer-id">// WHITEGRAVE.CAMPAIGN.DOC &middot; REV.03</div>
     <div class="footer-stamp">Suffer not the alien to live</div>
   </div>
 
