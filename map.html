@@ -14,256 +14,71 @@
     --red:#8a1f1f;--green-dim:#1a3d2a;--green:#2a6b42;
     --caslon:'Caslon Antique','CaslonAntique','Caslon Old Face','Libre Baskerville','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
     --mono:'Share Tech Mono',monospace;--body:'Barlow',sans-serif;
+
+    /* ── FACTION COLOURS ───────────────────────────────────────────────────
+       These are used by the control system below.
+       Change a colour here to update all hexes for that player at once.
+    ─────────────────────────────────────────────────────────────────────── */
+    --col-jim:   #c42a2a;   /* Jim   — Aeldari (Saim-Hann red)         */
+    --col-matt:  #6b8c3a;   /* Matt  — Death Guard (plague green)       */
+    --col-ben:   #c8891a;   /* Ben   — Imperial Agents (Inquisition amber) */
+    --col-sam:   #9b3a9b;   /* Sam   — Chaos Space Marines (corrupt purple) */
+    --col-james: #3a8c6b;   /* James — Death Guard (teal green)         */
   }
 
   *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--steel);color:var(--text-primary);font-family:var(--body);font-size:14px;line-height:1.6;min-height:100vh;}
 
-  body {
-    background: var(--steel);
-    color: var(--text-primary);
-    font-family: var(--body);
-    font-size: 14px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+  .back-nav{background:var(--steel-mid);border-bottom:1px solid var(--steel-border);padding:10px 28px;display:flex;align-items:center;gap:8px;position:relative;z-index:2;}
+  .back-nav::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:repeating-linear-gradient(90deg,var(--amber) 0px,var(--amber) 8px,transparent 8px,transparent 12px);}
+  .back-nav a{font-family:var(--mono);font-size:10px;color:var(--amber);text-decoration:none;letter-spacing:.12em;transition:color .15s;}
+  .back-nav a:hover{color:var(--amber-bright);}
+  .back-nav-sep{font-family:var(--mono);font-size:10px;color:var(--text-dim);}
+  .back-nav-current{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.12em;}
 
-  /* Back nav */
-  .back-nav {
-    background: var(--steel-mid);
-    border-bottom: 1px solid var(--steel-border);
-    padding: 10px 28px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    position: relative;
-    z-index: 2;
-  }
+  .page{max-width:1100px;margin:0 auto;padding:0 24px 64px;}
 
-  .back-nav::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: repeating-linear-gradient(90deg, var(--amber) 0px, var(--amber) 8px, transparent 8px, transparent 12px);
-  }
+  .page-header{background:var(--steel-mid);border-bottom:2px solid var(--amber);padding:20px 28px 16px;margin:0 -24px 24px;display:flex;align-items:flex-end;justify-content:space-between;}
+  .map-id{font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:.15em;margin-bottom:4px;}
+  .map-title{font-family:var(--caslon);font-size:34px;font-weight:700;color:#e8f0f8;letter-spacing:.06em;line-height:1;}
+  .map-sub{font-family:var(--caslon);font-size:12px;font-style:italic;color:var(--text-secondary);letter-spacing:.08em;margin-top:4px;}
+  .map-date{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.08em;text-align:right;}
 
-  .back-nav a {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--amber);
-    text-decoration: none;
-    letter-spacing: 0.12em;
-    transition: color 0.15s;
-  }
+  .map-wrap{position:relative;background:#080c10;border:1px solid var(--steel-border);border-left:3px solid var(--amber-dim);padding:12px;}
+  .map-wrap svg{display:block;width:100%;}
 
-  .back-nav a:hover { color: var(--amber-bright); }
+  /* ── HEX CONTROL BORDERS ───────────────────────────────────────────────
+     Applied via JS from the CONTROL LIST below.
+     Each controlled hex gets a glowing coloured polygon overlaid on top.
+  ─────────────────────────────────────────────────────────────────────── */
+  .hex-control { pointer-events: none; }
 
-  .back-nav-sep { font-family: var(--mono); font-size: 10px; color: var(--text-dim); }
+  .tooltip{position:absolute;background:var(--steel-mid);border:1px solid var(--steel-border-bright);border-left:2px solid var(--amber);padding:10px 14px;max-width:240px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:20;}
+  .tooltip.visible{opacity:1;}
+  .tooltip .tt-name{font-family:var(--caslon);font-size:13px;font-weight:700;color:#e0eaf5;letter-spacing:.04em;margin-bottom:2px;display:block;}
+  .tooltip .tt-zone{font-family:var(--mono);font-size:9px;color:var(--amber-dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
+  .tooltip .tt-desc{font-size:12px;color:var(--text-secondary);line-height:1.5;}
+  .tooltip .tt-connects{font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:7px;line-height:1.5;border-top:1px solid var(--steel-border);padding-top:6px;letter-spacing:.05em;}
+  .tooltip .tt-controlled{font-family:var(--mono);font-size:9px;margin-top:6px;padding-top:6px;border-top:1px solid var(--steel-border);letter-spacing:.08em;}
 
-  .back-nav-current {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 0.12em;
-  }
+  .legend{display:flex;flex-wrap:wrap;gap:1.5rem 2.5rem;margin-top:16px;padding:16px 20px;background:var(--steel-mid);border:1px solid var(--steel-border);}
+  .legend-group h3{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;}
+  .legend-item{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:12px;color:var(--text-secondary);}
+  .swatch{width:14px;height:14px;border-radius:2px;flex-shrink:0;border:1px solid rgba(255,255,255,.1);}
+  .line-swatch{width:32px;height:3px;flex-shrink:0;}
 
-  .page {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 24px 64px;
-  }
+  /* Control legend swatches */
+  .control-swatch{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:2px solid;}
 
-  /* Page header */
-  .page-header {
-    background: var(--steel-mid);
-    border-bottom: 2px solid var(--amber);
-    padding: 20px 28px 16px;
-    margin: 0 -24px 24px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-  }
-
-  .page-header-left {}
-
-  .map-id {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--amber);
-    letter-spacing: 0.15em;
-    margin-bottom: 4px;
-  }
-
-  .map-title {
-    font-family: var(--caslon);
-    font-size: 34px;
-    font-weight: 700;
-    color: #e8f0f8;
-    letter-spacing: 0.06em;
-    line-height: 1;
-  }
-
-  .map-sub {
-    font-family: var(--caslon);
-    font-size: 12px;
-    font-style: italic;
-    color: var(--text-secondary);
-    letter-spacing: 0.08em;
-    margin-top: 4px;
-  }
-
-  .map-date {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 0.08em;
-    text-align: right;
-  }
-
-  /* Map container */
-  .map-wrap {
-    position: relative;
-    background: #080c10;
-    border: 1px solid var(--steel-border);
-    border-left: 3px solid var(--amber-dim);
-    padding: 12px;
-  }
-
-  .map-wrap svg {
-    display: block;
-    width: 100%;
-  }
-
-  /* Tooltip — restyled to match hub */
-  .tooltip {
-    position: absolute;
-    background: var(--steel-mid);
-    border: 1px solid var(--steel-border-bright);
-    border-left: 2px solid var(--amber);
-    padding: 10px 14px;
-    max-width: 240px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s;
-    z-index: 20;
-  }
-
-  .tooltip.visible { opacity: 1; }
-
-  .tooltip .tt-name {
-    font-family: var(--caslon);
-    font-size: 13px;
-    font-weight: 700;
-    color: #e0eaf5;
-    letter-spacing: 0.04em;
-    margin-bottom: 2px;
-    display: block;
-  }
-
-  .tooltip .tt-zone {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--amber-dim);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .tooltip .tt-desc {
-    font-size: 12px;
-    color: var(--text-secondary);
-    line-height: 1.5;
-  }
-
-  .tooltip .tt-connects {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--text-dim);
-    margin-top: 7px;
-    line-height: 1.5;
-    border-top: 1px solid var(--steel-border);
-    padding-top: 6px;
-    letter-spacing: 0.05em;
-  }
-
-  /* Legend below map */
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem 2.5rem;
-    margin-top: 16px;
-    padding: 16px 20px;
-    background: var(--steel-mid);
-    border: 1px solid var(--steel-border);
-  }
-
-  .legend-group h3 {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--amber);
-    margin-bottom: 8px;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 5px;
-    font-size: 12px;
-    color: var(--text-secondary);
-  }
-
-  .swatch {
-    width: 14px;
-    height: 14px;
-    border-radius: 2px;
-    flex-shrink: 0;
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .line-swatch {
-    width: 32px;
-    height: 3px;
-    flex-shrink: 0;
-  }
-
-  /* Footer */
-  .page-footer {
-    margin-top: 24px;
-    padding-top: 16px;
-    border-top: 1px solid var(--steel-border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .footer-id {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 0.1em;
-  }
-
-  .footer-stamp {
-    font-family: var(--caslon);
-    font-size: 12px;
-    color: var(--amber-dim);
-    letter-spacing: 0.1em;
-    border: 1px solid var(--amber-dim);
-    padding: 3px 12px;
-    opacity: 0.7;
-    font-style: italic;
-  }
+  .page-footer{margin-top:24px;padding-top:16px;border-top:1px solid var(--steel-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .footer-id{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.1em;}
+  .footer-stamp{font-family:var(--caslon);font-size:12px;color:var(--amber-dim);letter-spacing:.1em;border:1px solid var(--amber-dim);padding:3px 12px;opacity:.7;font-style:italic;}
 
   @media(max-width:640px){
-    .page-header { flex-direction: column; gap: 10px; }
-    .map-date { text-align: left; }
-    .back-nav { padding: 10px 16px; }
-    .page { padding: 0 16px 48px; }
+    .page-header{flex-direction:column;gap:10px;}
+    .map-date{text-align:left;}
+    .back-nav{padding:10px 16px;}
+    .page{padding:0 16px 48px;}
   }
 </style>
 </head>
@@ -278,7 +93,7 @@
 <div class="page">
 
   <div class="page-header">
-    <div class="page-header-left">
+    <div>
       <div class="map-id">// DREADHOLME.MIDNIGHT-SECTOR.THEATRE-MAP //</div>
       <div class="map-title">Dreadholme</div>
       <div class="map-sub">Hive City &mdash; Midnight Sector &mdash; Theatre of War</div>
@@ -513,81 +328,112 @@
     </g>
 
     </svg>
-
     <div class="tooltip" id="tooltip">
       <span class="tt-name" id="tt-name"></span>
       <div class="tt-zone" id="tt-zone"></div>
       <span class="tt-desc" id="tt-desc"></span>
       <div class="tt-connects" id="tt-connects"></div>
+      <div class="tt-controlled" id="tt-controlled" style="display:none;"></div>
     </div>
-  </div>
 
   <!-- Legend -->
   <div class="legend">
     <div class="legend-group">
-      <h3>Site types</h3>
-      <div class="legend-item">Landing Zone — orbital reinforcement points</div>
-      <div class="legend-item">Energy Plant — powers the hive systems</div>
-      <div class="legend-item">Armoury — weapons and materiel</div>
-      <div class="legend-item">Transit Hub / Choke — controls movement</div>
+      <h3>// Site types</h3>
+      <div class="legend-item">Landing Zone &mdash; orbital reinforcement points</div>
+      <div class="legend-item">Energy Plant &mdash; powers hive systems</div>
+      <div class="legend-item">Armoury &mdash; weapons and materiel</div>
+      <div class="legend-item">Transit Hub / Choke &mdash; controls movement</div>
     </div>
     <div class="legend-group">
-      <h3>Site types (cont.)</h3>
-      <div class="legend-item">Auspex Array — intelligence and jamming</div>
-      <div class="legend-item">Underhive Access — deep routes below</div>
-      <div class="legend-item">Command Post / Centre — command assets</div>
-      <div class="legend-item">Power Relay — void shield grid nodes</div>
+      <h3>// Site types (cont.)</h3>
+      <div class="legend-item">Auspex Array &mdash; intelligence and jamming</div>
+      <div class="legend-item">Underhive Access &mdash; deep routes below</div>
+      <div class="legend-item">Command Post / Centre &mdash; command assets</div>
+      <div class="legend-item">Power Relay &mdash; void shield grid nodes</div>
     </div>
     <div class="legend-group">
-      <h3>Generic zones</h3>
-      <div class="legend-item">Habs — overcrowded residential</div>
-      <div class="legend-item">Slums — lawless, contested, ungoverned</div>
-      <div class="legend-item">Spoil — ruined industrial wasteland</div>
-      <div class="legend-item">Wasteland — impassable ash flats</div>
+      <h3>// Zones</h3>
+      <div class="legend-item">Habs &mdash; overcrowded residential</div>
+      <div class="legend-item">Slums &mdash; lawless, contested, ungoverned</div>
+      <div class="legend-item">Spoil &mdash; ruined industrial wasteland</div>
+      <div class="legend-item">Wasteland &mdash; impassable ash flats</div>
+    </div>
+    <div class="legend-group">
+      <h3>// Territorial control</h3>
+      <div class="legend-item"><div class="control-swatch" style="background:#c42a2a22;border-color:#c42a2a;"></div>Jim &mdash; Aeldari (Saim-Hann)</div>
+      <div class="legend-item"><div class="control-swatch" style="background:#6b8c3a22;border-color:#6b8c3a;"></div>Matt &mdash; Death Guard</div>
+      <div class="legend-item"><div class="control-swatch" style="background:#c8891a22;border-color:#c8891a;"></div>Ben &mdash; Imperial Agents</div>
+      <div class="legend-item"><div class="control-swatch" style="background:#9b3a9b22;border-color:#9b3a9b;"></div>Sam &mdash; Chaos Space Marines</div>
+      <div class="legend-item"><div class="control-swatch" style="background:#3a8c6b22;border-color:#3a8c6b;"></div>James &mdash; Death Guard</div>
     </div>
   </div>
 
-  <!-- Factions -->
-  <div class="factions">
-    <div class="faction-card">
-      <div class="player">Jim / Chenstar</div>
-      <div class="faction-name">Aeldari</div>
-      <div class="faction-desc">Ancient, patient, watching from the webway.</div>
-      <div class="battles-remaining">⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡ 10 battles</div>
-    </div>
-    <div class="faction-card">
-      <div class="player">Matt</div>
-      <div class="faction-name">Death Guard · Nurgle</div>
-      <div class="faction-desc">Rituals, plague, and a Greater Unclean One in service.</div>
-      <div class="battles-remaining">⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡ 10 battles</div>
-    </div>
-    <div class="faction-card">
-      <div class="player">Ben</div>
-      <div class="faction-name">Imperial Agents</div>
-      <div class="faction-desc">Inquisitor Corina's retinue. Breacher teams in Warp transit.</div>
-      <div class="battles-remaining">⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡ 10 battles</div>
-    </div>
-    <div class="faction-card">
-      <div class="player">Sam</div>
-      <div class="faction-name">Chaos Space Marines</div>
-      <div class="faction-desc">Heretic Astartes. Allegiances and objectives unclear.</div>
-      <div class="battles-remaining">⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡ 10 battles</div>
-    </div>
-    <div class="faction-card">
-      <div class="player">James</div>
-      <div class="faction-name">Death Guard · Nurgle</div>
-      <div class="faction-desc">Second servant of the Plague God. Ally or rival to Matt.</div>
-      <div class="battles-remaining">⬡⬡⬡⬡⬡⬡⬡⬡⬡⬡ 10 battles</div>
-    </div>
+  <div class="page-footer">
+    <div class="footer-id">// WHITEGRAVE.CAMPAIGN.DOC &middot; DREADHOLME-MAP &middot; 3 140326.M42</div>
+    <div class="footer-stamp">Suffer not the alien to live</div>
   </div>
-
-  <footer>
-    Dreadholme · Midnight Sector · Campaign Record · In the grim darkness of the far future, there is only war.
-  </footer>
 
 </div>
 
 <script>
+// ═══════════════════════════════════════════════════════════════════════════
+// TERRITORIAL CONTROL LIST
+// ─────────────────────────────────────────────────────────────────────────
+// To mark a hex as captured, add the hex name and player to this list.
+// The hex name must match EXACTLY what appears on the map (case sensitive).
+// Players: "jim" / "matt" / "ben" / "sam" / "james"
+//
+// Example — after a session where Jim took Soot Gate and Sam took Hab Mortis:
+//   { hex: "Soot Gate",  player: "jim"  },
+//   { hex: "Hab Mortis", player: "sam"  },
+//
+// To remove control, just delete the line. To change control, update the player.
+// ═══════════════════════════════════════════════════════════════════════════
+
+const CONTROL = [
+  // { hex: "Hex Name Here", player: "jim" },
+];
+
+// ─────────────────────────────────────────────────────────────────────────
+// Faction colour map — matches CSS variables above
+// ─────────────────────────────────────────────────────────────────────────
+const FACTION_COLOURS = {
+  jim:   { stroke: "#c42a2a", fill: "#c42a2a", label: "Jim — Aeldari"           },
+  matt:  { stroke: "#6b8c3a", fill: "#6b8c3a", label: "Matt — Death Guard"      },
+  ben:   { stroke: "#c8891a", fill: "#c8891a", label: "Ben — Imperial Agents"   },
+  sam:   { stroke: "#9b3a9b", fill: "#9b3a9b", label: "Sam — Chaos Marines"     },
+  james: { stroke: "#3a8c6b", fill: "#3a8c6b", label: "James — Death Guard"     },
+};
+
+// ─────────────────────────────────────────────────────────────────────────
+// Control rendering — reads CONTROL list and overlays coloured hex borders
+// ─────────────────────────────────────────────────────────────────────────
+const controlMap = {};
+CONTROL.forEach(c => { controlMap[c.hex.toLowerCase()] = c.player; });
+
+document.querySelectorAll(".hex").forEach(hex => {
+  const name = hex.dataset.name || "";
+  const player = controlMap[name.toLowerCase()];
+  if (player && FACTION_COLOURS[player]) {
+    const col = FACTION_COLOURS[player];
+    const poly = hex.querySelector("polygon");
+    if (poly) {
+      const overlay = poly.cloneNode();
+      overlay.setAttribute("fill", col.fill);
+      overlay.setAttribute("fill-opacity", "0.12");
+      overlay.setAttribute("stroke", col.stroke);
+      overlay.setAttribute("stroke-width", "2.5");
+      overlay.setAttribute("class", "hex-control");
+      hex.appendChild(overlay);
+    }
+    hex.dataset.controlled = col.label;
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────
+// Tooltip logic
+// ─────────────────────────────────────────────────────────────────────────
 const tooltip = document.getElementById('tooltip');
 const ttName = document.getElementById('tt-name');
 const ttZone = document.getElementById('tt-zone');
@@ -616,40 +462,20 @@ document.querySelectorAll('.hex').forEach(hex => {
     tooltip.classList.remove('visible');
   });
 });
+
+// Extend tooltip to show control status
+document.querySelectorAll(".hex").forEach(hex => {
+  hex.addEventListener("mouseenter", () => {
+    const ttControlled = document.getElementById("tt-controlled");
+    if (ttControlled) {
+      ttControlled.textContent = hex.dataset.controlled
+        ? "Controlled by: " + hex.dataset.controlled
+        : "";
+      ttControlled.style.display = hex.dataset.controlled ? "block" : "none";
+    }
+  });
+});
 </script>
 
-  </div>
-
-  <!-- Legend -->
-  <div class="legend">
-    <div class="legend-group">
-      <h3>// Site types</h3>
-      <div class="legend-item">Landing Zone &mdash; orbital reinforcement points</div>
-      <div class="legend-item">Energy Plant &mdash; powers hive systems</div>
-      <div class="legend-item">Armoury &mdash; weapons and materiel</div>
-      <div class="legend-item">Transit Hub / Choke &mdash; controls movement</div>
-    </div>
-    <div class="legend-group">
-      <h3>// Site types (cont.)</h3>
-      <div class="legend-item">Auspex Array &mdash; intelligence and jamming</div>
-      <div class="legend-item">Underhive Access &mdash; deep routes below</div>
-      <div class="legend-item">Command Post / Centre &mdash; command assets</div>
-      <div class="legend-item">Power Relay &mdash; void shield grid nodes</div>
-    </div>
-    <div class="legend-group">
-      <h3>// Zones</h3>
-      <div class="legend-item">Habs &mdash; overcrowded residential</div>
-      <div class="legend-item">Slums &mdash; lawless, contested, ungoverned</div>
-      <div class="legend-item">Spoil &mdash; ruined industrial wasteland</div>
-      <div class="legend-item">Wasteland &mdash; impassable ash flats</div>
-    </div>
-  </div>
-
-  <div class="page-footer">
-    <div class="footer-id">// WHITEGRAVE.CAMPAIGN.DOC &middot; DREADHOLME-MAP &middot; 3 140326.M42</div>
-    <div class="footer-stamp">Suffer not the alien to live</div>
-  </div>
-
-</div>
 </body>
 </html>
