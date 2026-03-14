@@ -28,6 +28,39 @@
   .status-pill{display:inline-block;background:var(--green-dim);border:1px solid var(--green);color:#4caf7a;font-family:var(--mono);font-size:10px;padding:3px 12px;letter-spacing:.1em;margin-bottom:6px;}
   .status-date{display:block;font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.08em;}
   .scan-line{height:1px;background:linear-gradient(90deg,transparent,var(--amber-dim),transparent);margin:14px 0 0;opacity:.6;}
+
+  /* Map link strip */
+  .map-nav {
+    background: var(--steel-light);
+    border-bottom: 1px solid var(--steel-border);
+    padding: 8px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .map-nav-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+  }
+
+  .map-nav a {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--amber);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    padding: 4px 14px;
+    border: 1px solid var(--amber-dim);
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+
+  .map-nav a:hover {
+    border-color: var(--amber);
+    background: rgba(200,137,26,0.08);
+  }
   .section{padding:22px 28px;border-bottom:1px solid var(--steel-border);}
   .section-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
   .section-tag{font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:.18em;text-transform:uppercase;white-space:nowrap;}
@@ -175,6 +208,11 @@
     <div class="scan-line"></div>
   </div>
 
+  <div class="map-nav">
+    <span class="map-nav-label">// DREADHOLME · MIDNIGHT SECTOR</span>
+    <a href="map.html">&#9654; VIEW THEATRE MAP</a>
+  </div>
+
   <!-- LAST ENGAGEMENT — replace entirely after every session -->
   <div class="section">
     <div class="section-header">
@@ -182,8 +220,8 @@
       <div class="section-rule"></div>
     </div>
     <div class="engagement-card" style="border-left-color:#b02828;">
-      <div class="engagement-title">Summoning at the Sunderhive Sump District</div>
-      <div class="engagement-meta">3 140326.M42 &middot; SUNDERHIVE SUMP DISTRICT &middot; CHAOS FORCES</div>
+      <div class="engagement-title">Ritual at the Grimoire Draconis</div>
+      <div class="engagement-meta">3 140326.M42 &middot; ARCHEO GAOL OF SAINT SIGISMUND &middot; CHAOS FORCES</div>
       <ul class="sitrep">
         <li>Forces of Chaos broke the shackles on the Grimoire Draconis, learning the Daemon's true name.</li>
         <li>A lone servant of Nurgle risked and completed the sacrifice amidst skulls and viscera.</li>
