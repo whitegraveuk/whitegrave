@@ -8,195 +8,152 @@
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --steel: #0d1117;
-    --steel-mid: #161c26;
-    --steel-light: #1e2736;
-    --steel-border: #2a3545;
-    --steel-border-bright: #3d5068;
-    --amber: #c8891a;
-    --amber-bright: #e8a020;
-    --amber-dim: #7a5010;
-    --text-primary: #c8d4e0;
-    --text-secondary: #7a8fa8;
-    --text-dim: #4a5f75;
-    --red: #8a1f1f;
-    --red-bright: #b02828;
-    --green-dim: #1a3d2a;
-    --green: #2a6b42;
-    --mono: 'Share Tech Mono', monospace;
-    --caslon: 'Caslon Antique', 'CaslonAntique', 'Caslon Old Face', 'Libre Baskerville', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
-    --condensed: 'Barlow Condensed', sans-serif;
-    --body: 'Barlow', sans-serif;
+    --steel:#0d1117;--steel-mid:#161c26;--steel-light:#1e2736;--steel-border:#2a3545;
+    --steel-border-bright:#3d5068;--amber:#c8891a;--amber-bright:#e8a020;--amber-dim:#7a5010;
+    --text-primary:#c8d4e0;--text-secondary:#7a8fa8;--text-dim:#4a5f75;
+    --red:#8a1f1f;--red-bright:#b02828;--green-dim:#1a3d2a;--green:#2a6b42;
+    --caslon:'Caslon Antique','CaslonAntique','Caslon Old Face','Libre Baskerville','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+    --mono:'Share Tech Mono',monospace;--body:'Barlow',sans-serif;
   }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--steel);color:var(--text-primary);font-family:var(--body);font-size:14px;line-height:1.6;min-height:100vh;}
+  .page{max-width:720px;margin:0 auto;padding:0 0 64px;}
+  .header{background:var(--steel-mid);border-bottom:2px solid var(--amber);padding:24px 28px 20px;position:relative;overflow:hidden;}
+  .header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:repeating-linear-gradient(90deg,var(--amber) 0px,var(--amber) 8px,transparent 8px,transparent 12px);}
+  .header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
+  .campaign-id{font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:.15em;margin-bottom:6px;}
+  .campaign-name{font-family:var(--caslon);font-size:42px;font-weight:700;color:#e8f0f8;letter-spacing:.06em;line-height:1;}
+  .campaign-sub{font-family:var(--caslon);font-size:13px;color:var(--text-secondary);letter-spacing:.1em;margin-top:6px;font-style:italic;}
+  .status-block{text-align:right;}
+  .status-pill{display:inline-block;background:var(--green-dim);border:1px solid var(--green);color:#4caf7a;font-family:var(--mono);font-size:10px;padding:3px 12px;letter-spacing:.1em;margin-bottom:6px;}
+  .status-date{display:block;font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.08em;}
+  .scan-line{height:1px;background:linear-gradient(90deg,transparent,var(--amber-dim),transparent);margin:14px 0 0;opacity:.6;}
+  .section{padding:22px 28px;border-bottom:1px solid var(--steel-border);}
+  .section-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+  .section-tag{font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:.18em;text-transform:uppercase;white-space:nowrap;}
+  .section-rule{flex:1;height:1px;background:var(--steel-border);}
+  .engagement-card{background:var(--steel-mid);border:1px solid var(--steel-border);border-left:3px solid var(--amber);padding:16px 18px;margin-bottom:14px;}
+  .engagement-title{font-family:var(--caslon);font-size:20px;font-weight:700;color:#e0eaf5;letter-spacing:.04em;margin-bottom:2px;}
+  .engagement-meta{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.1em;margin-bottom:12px;}
+  .sitrep{list-style:none;padding:0;}
+  .sitrep li{padding:5px 0 5px 20px;position:relative;font-size:13px;color:var(--text-secondary);line-height:1.5;border-bottom:1px solid var(--steel-border);}
+  .sitrep li:last-child{border-bottom:none;}
+  .sitrep li::before{content:'//';position:absolute;left:0;color:var(--amber-dim);font-family:var(--mono);font-size:10px;top:6px;}
+  .intercept{margin-top:14px;padding:10px 14px;background:rgba(200,137,26,.06);border-left:2px solid var(--amber-dim);font-family:var(--mono);font-size:11px;color:var(--amber-dim);letter-spacing:.04em;line-height:1.6;}
+  .intercept-label{color:var(--amber);display:block;margin-bottom:4px;font-size:10px;letter-spacing:.15em;}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* ── ROSTER CARD STATES ────────────────────────────────────────────────────
+     (no class)   = Active player
+     .absent      = Missed a session — dimmed. Add badge-absent. Remove on return.
+     .new-recruit = Just joined — green border. Add badge-new-recruit. Remove after 2nd session.
+     .fallen      = Left / force destroyed — red dashed, name struck through. Add badge-fallen.
+     .unknown     = Empty placeholder slot — dashed, heavily faded.
+  ─────────────────────────────────────────────────────────────────────────── */
+  .roster-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .roster-card{background:var(--steel-mid);border:1px solid var(--steel-border);padding:14px 16px;position:relative;}
+  .roster-card::after{content:'';position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 14px 14px 0;border-color:transparent var(--steel-border) transparent transparent;}
+  .roster-card.unknown{border-style:dashed;opacity:.45;}
+  .roster-card.absent{opacity:.6;}
+  .roster-card.new-recruit{border-color:var(--green);}
+  .roster-card.new-recruit::after{border-color:transparent var(--green) transparent transparent;}
+  .roster-card.fallen{border-style:dashed;border-color:var(--red);opacity:.5;}
+  .roster-card.fallen .roster-callsign{text-decoration:line-through;color:var(--text-dim);}
+  .roster-callsign{font-family:var(--caslon);font-size:17px;font-weight:700;color:#e0eaf5;letter-spacing:.04em;margin-bottom:2px;}
+  .roster-faction{font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:.12em;margin-bottom:8px;}
+  .roster-note{font-size:12px;color:var(--text-dim);line-height:1.4;font-style:italic;}
+  .roster-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:1px 7px;margin-top:6px;}
+  .badge-absent{border:1px solid var(--steel-border-bright);color:var(--text-dim);}
+  .badge-new-recruit{border:1px solid var(--green);color:#4caf7a;background:rgba(42,107,66,.15);}
+  .badge-fallen{border:1px solid var(--red);color:#e05050;background:rgba(138,31,31,.15);}
 
-  body {
-    background: var(--steel);
-    color: var(--text-primary);
-    font-family: var(--body);
-    font-size: 14px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+  /* ── PATH TO GLORY ─────────────────────────────────────────────────────────
+     TO UPDATE A PLAYER:
+     · Add "done"    to completed nodes
+     · Add "current" to their current node
+     · Update the GP <span> number
+     · Add .ptg-upgrade tags: weapon (amber) / trait (green) / artifact (purple)
+     · Remove "No upgrades yet" once real upgrades exist
 
-  .page { max-width: 720px; margin: 0 auto; padding: 0 0 64px; }
+     PATH: G1 > G2 > C1* > G3 > G4 > G5 > C2* > G6 > G7 > FC*
+     * Convergence gate — requires a WIN to advance past.
+       C1 = Weapon Upgrade or Artificer Artifact
+       C2 = Warlord Battle Trait
+       FC = Legendary Artifact (Campaign Goal)
 
-  .header {
-    background: var(--steel-mid);
-    border-bottom: 2px solid var(--amber);
-    padding: 24px 28px 20px;
-    position: relative;
-    overflow: hidden;
-  }
+     GP SCORING: Played 1 · Warlord 1 · 33% 1 · 66% 1 · Routed 1 · Win 5
+     SPENDING:   Territory 10 · Reinf.5% 1 · Reinf.10% 3 · Temp.Req 3GP (2+=upgrade, 6+=keep)
+  ─────────────────────────────────────────────────────────────────────────── */
+  .ptg-row{padding:12px 0;border-bottom:1px solid var(--steel-border);}
+  .ptg-row:last-child{border-bottom:none;}
+  .ptg-player-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;}
+  .ptg-player-name{font-family:var(--caslon);font-size:15px;font-weight:700;color:#e0eaf5;letter-spacing:.04em;}
+  .ptg-faction{font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:.1em;margin-left:8px;}
+  .ptg-gp{font-family:var(--mono);font-size:10px;color:var(--text-secondary);}
+  .ptg-gp span{color:var(--amber);font-size:14px;}
+  .ptg-path{display:flex;align-items:flex-start;gap:0;margin-bottom:8px;}
+  .ptg-node{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
+  .ptg-node::before{content:'';position:absolute;top:9px;left:-50%;width:100%;height:1px;background:var(--steel-border);z-index:0;}
+  .ptg-node:first-child::before{display:none;}
+  .ptg-dot{width:18px;height:18px;border-radius:50%;border:1px solid var(--steel-border-bright);background:var(--steel-light);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:var(--text-dim);position:relative;z-index:1;}
+  .ptg-node.convergence .ptg-dot{border-radius:3px;transform:rotate(45deg);border-color:var(--amber-dim);}
+  .ptg-node.convergence .ptg-dot span{transform:rotate(-45deg);display:block;}
+  .ptg-node.done .ptg-dot{background:var(--amber-dim);border-color:var(--amber);color:var(--amber);}
+  .ptg-node.done::before{background:var(--amber-dim);}
+  .ptg-node.current .ptg-dot{background:var(--amber);border-color:var(--amber-bright);color:var(--steel);font-weight:bold;}
+  .ptg-label{font-family:var(--mono);font-size:7px;color:var(--text-dim);margin-top:3px;white-space:nowrap;}
+  .ptg-node.done .ptg-label{color:var(--amber-dim);}
+  .ptg-node.current .ptg-label{color:var(--amber);}
+  .ptg-upgrades{display:flex;flex-wrap:wrap;gap:5px;}
+  .ptg-upgrade{font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:1px 7px;border:1px solid var(--steel-border-bright);color:var(--text-secondary);}
+  .ptg-upgrade.weapon{border-color:var(--amber-dim);color:var(--amber);}
+  .ptg-upgrade.trait{border-color:#3d6050;color:#5aaa80;}
+  .ptg-upgrade.artifact{border-color:#5a3070;color:#b070e0;}
+  .ptg-no-upgrades{font-family:var(--mono);font-size:9px;color:var(--text-dim);}
 
-  .header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: repeating-linear-gradient(90deg, var(--amber) 0px, var(--amber) 8px, transparent 8px, transparent 12px);
-  }
+  /* PERSONS OF INTEREST
+     Add a new .poi-row when a significant NPC appears in play.
+     threat-tag classes: threat-asset / threat-hostile / threat-unknown */
+  .poi-row{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--steel-border);}
+  .poi-row:last-child{border-bottom:none;}
+  .poi-sigil{width:40px;height:40px;min-width:40px;background:var(--steel-light);border:1px solid var(--steel-border-bright);display:flex;align-items:center;justify-content:center;font-family:var(--caslon);font-size:14px;font-weight:700;color:var(--amber);}
+  .poi-name{font-family:var(--caslon);font-size:16px;font-weight:700;color:#e0eaf5;letter-spacing:.04em;margin-bottom:2px;}
+  .poi-designation{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.1em;margin-bottom:4px;}
+  .poi-intel{font-size:13px;color:var(--text-secondary);line-height:1.4;}
+  .threat-tag{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;padding:2px 8px;margin-top:4px;}
+  .threat-hostile{background:rgba(138,31,31,.3);color:#e05050;border:1px solid var(--red);}
+  .threat-unknown{background:rgba(74,95,117,.3);color:var(--text-secondary);border:1px solid var(--steel-border-bright);}
+  .threat-asset{background:rgba(42,107,66,.3);color:#4caf7a;border:1px solid var(--green);}
 
-  .header-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+  /* THEATRES
+     .theatre-status classes: status-contested / status-warp / status-unknown */
+  .theatre-item{padding:12px 0;border-bottom:1px solid var(--steel-border);display:flex;gap:14px;align-items:flex-start;}
+  .theatre-item:last-child{border-bottom:none;}
+  .theatre-code{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.08em;min-width:40px;padding-top:2px;}
+  .theatre-name{font-family:var(--caslon);font-size:15px;font-weight:700;color:#ccd8e8;letter-spacing:.04em;margin-bottom:3px;}
+  .theatre-note{font-size:12px;color:var(--text-dim);line-height:1.4;font-style:italic;margin-bottom:4px;}
+  .theatre-status{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 8px;letter-spacing:.1em;}
+  .status-contested{background:rgba(138,31,31,.2);color:#e05050;border:1px solid var(--red);}
+  .status-warp{background:rgba(80,20,100,.3);color:#b070e0;border:1px solid #6030a0;}
+  .status-unknown{background:rgba(42,53,69,.6);color:var(--text-dim);border:1px solid var(--steel-border);}
 
-  .campaign-id { font-family: var(--mono); font-size: 10px; color: var(--amber); letter-spacing: 0.15em; margin-bottom: 6px; }
+  /* INTELLIGENCE — add newest fragment at the top after each session */
+  .intel-item{padding:12px 16px;border-left:2px solid var(--steel-border-bright);margin-bottom:12px;background:var(--steel-mid);}
+  .intel-item:last-child{margin-bottom:0;}
+  .intel-source{font-family:var(--mono);font-size:9px;color:var(--amber-dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:5px;display:block;}
+  .intel-text{font-size:13px;color:var(--text-secondary);font-style:italic;line-height:1.5;}
 
-  .campaign-name {
-    font-family: var(--caslon);
-    font-size: 42px;
-    font-weight: 700;
-    color: #e8f0f8;
-    letter-spacing: 0.06em;
-    line-height: 1;
-  }
+  .footer{padding:20px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .footer-id{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.1em;}
+  .footer-stamp{font-family:var(--caslon);font-size:12px;color:var(--amber-dim);letter-spacing:.1em;border:1px solid var(--amber-dim);padding:3px 12px;opacity:.7;font-style:italic;}
 
-  .campaign-sub {
-    font-family: var(--caslon);
-    font-size: 13px;
-    color: var(--text-secondary);
-    letter-spacing: 0.1em;
-    margin-top: 6px;
-    font-style: italic;
-  }
-
-  .status-block { text-align: right; }
-  .status-pill { display: inline-block; background: var(--green-dim); border: 1px solid var(--green); color: #4caf7a; font-family: var(--mono); font-size: 10px; padding: 3px 12px; letter-spacing: 0.1em; margin-bottom: 6px; }
-  .status-date { display: block; font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em; }
-
-  .scan-line { height: 1px; background: linear-gradient(90deg, transparent, var(--amber-dim), transparent); margin: 14px 0 0; opacity: 0.6; }
-
-  .section { padding: 22px 28px; border-bottom: 1px solid var(--steel-border); }
-  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-  .section-tag { font-family: var(--mono); font-size: 10px; color: var(--amber); letter-spacing: 0.18em; text-transform: uppercase; white-space: nowrap; }
-  .section-rule { flex: 1; height: 1px; background: var(--steel-border); }
-
-  .engagement-card { background: var(--steel-mid); border: 1px solid var(--steel-border); border-left: 3px solid var(--amber); padding: 16px 18px; margin-bottom: 14px; }
-
-  .engagement-title {
-    font-family: var(--caslon);
-    font-size: 20px;
-    font-weight: 700;
-    color: #e0eaf5;
-    letter-spacing: 0.04em;
-    margin-bottom: 2px;
-  }
-
-  .engagement-meta { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 12px; }
-
-  .sitrep { list-style: none; padding: 0; }
-  .sitrep li { padding: 5px 0 5px 20px; position: relative; font-size: 13px; color: var(--text-secondary); line-height: 1.5; border-bottom: 1px solid var(--steel-border); }
-  .sitrep li:last-child { border-bottom: none; }
-  .sitrep li::before { content: '//'; position: absolute; left: 0; color: var(--amber-dim); font-family: var(--mono); font-size: 10px; top: 6px; }
-
-  .intercept { margin-top: 14px; padding: 10px 14px; background: rgba(200,137,26,0.06); border-left: 2px solid var(--amber-dim); font-family: var(--mono); font-size: 11px; color: var(--amber-dim); letter-spacing: 0.04em; line-height: 1.6; }
-  .intercept-label { color: var(--amber); display: block; margin-bottom: 4px; font-size: 10px; letter-spacing: 0.15em; }
-
-  .roster-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .roster-card { background: var(--steel-mid); border: 1px solid var(--steel-border); padding: 14px 16px; position: relative; }
-  .roster-card::after { content: ''; position: absolute; top: 0; right: 0; width: 0; height: 0; border-style: solid; border-width: 0 14px 14px 0; border-color: transparent var(--steel-border) transparent transparent; }
-
-  .roster-callsign {
-    font-family: var(--caslon);
-    font-size: 17px;
-    font-weight: 700;
-    color: #e0eaf5;
-    letter-spacing: 0.04em;
-    margin-bottom: 2px;
-  }
-
-  .roster-faction { font-family: var(--mono); font-size: 10px; color: var(--amber); letter-spacing: 0.12em; margin-bottom: 8px; }
-  .roster-note { font-size: 12px; color: var(--text-dim); line-height: 1.4; font-style: italic; }
-  .roster-card.unknown { border-style: dashed; opacity: 0.45; }
-
-  .poi-row { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--steel-border); }
-  .poi-row:last-child { border-bottom: none; }
-  .poi-sigil { width: 40px; height: 40px; min-width: 40px; background: var(--steel-light); border: 1px solid var(--steel-border-bright); display: flex; align-items: center; justify-content: center; font-family: var(--caslon); font-size: 14px; font-weight: 700; color: var(--amber); }
-
-  .poi-name {
-    font-family: var(--caslon);
-    font-size: 16px;
-    font-weight: 700;
-    color: #e0eaf5;
-    letter-spacing: 0.04em;
-    margin-bottom: 2px;
-  }
-
-  .poi-designation { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 4px; }
-  .poi-intel { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
-
-  .threat-tag { display: inline-block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; padding: 2px 8px; margin-top: 4px; }
-  .threat-hostile { background: rgba(138,31,31,0.3); color: #e05050; border: 1px solid var(--red); }
-  .threat-unknown { background: rgba(74,95,117,0.3); color: var(--text-secondary); border: 1px solid var(--steel-border-bright); }
-  .threat-asset   { background: rgba(42,107,66,0.3); color: #4caf7a; border: 1px solid var(--green); }
-
-  .theatre-item { padding: 12px 0; border-bottom: 1px solid var(--steel-border); display: flex; gap: 14px; align-items: flex-start; }
-  .theatre-item:last-child { border-bottom: none; }
-  .theatre-code { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em; min-width: 40px; padding-top: 2px; }
-
-  .theatre-name {
-    font-family: var(--caslon);
-    font-size: 15px;
-    font-weight: 700;
-    color: #ccd8e8;
-    letter-spacing: 0.04em;
-    margin-bottom: 3px;
-  }
-
-  .theatre-note { font-size: 12px; color: var(--text-dim); line-height: 1.4; font-style: italic; margin-bottom: 4px; }
-
-  .theatre-status { display: inline-block; font-family: var(--mono); font-size: 9px; padding: 2px 8px; letter-spacing: 0.1em; }
-  .status-contested { background: rgba(138,31,31,0.2); color: #e05050; border: 1px solid var(--red); }
-  .status-warp      { background: rgba(80,20,100,0.3); color: #b070e0; border: 1px solid #6030a0; }
-  .status-unknown   { background: rgba(42,53,69,0.6); color: var(--text-dim); border: 1px solid var(--steel-border); }
-
-  .intel-item { padding: 12px 16px; border-left: 2px solid var(--steel-border-bright); margin-bottom: 12px; background: var(--steel-mid); }
-  .intel-item:last-child { margin-bottom: 0; }
-  .intel-source { font-family: var(--mono); font-size: 9px; color: var(--amber-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 5px; display: block; }
-  .intel-text { font-size: 13px; color: var(--text-secondary); font-style: italic; line-height: 1.5; }
-
-  .footer { padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-  .footer-id { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; }
-
-  .footer-stamp {
-    font-family: var(--caslon);
-    font-size: 12px;
-    color: var(--amber-dim);
-    letter-spacing: 0.1em;
-    border: 1px solid var(--amber-dim);
-    padding: 3px 12px;
-    opacity: 0.7;
-    font-style: italic;
-  }
-
-  @media (max-width: 540px) {
-    .roster-grid { grid-template-columns: 1fr; }
-    .campaign-name { font-size: 32px; }
-    .header-top { flex-direction: column; gap: 12px; }
-    .status-block { text-align: left; }
-    .section { padding: 18px 16px; }
-    .header { padding: 20px 16px 16px; }
-    .footer { padding: 16px; }
+  @media(max-width:540px){
+    .roster-grid{grid-template-columns:1fr;}
+    .campaign-name{font-size:32px;}
+    .header-top{flex-direction:column;gap:12px;}
+    .status-block{text-align:left;}
+    .section{padding:18px 16px;}
+    .header{padding:20px 16px 16px;}
+    .footer{padding:16px;}
   }
 </style>
 </head>
@@ -212,37 +169,49 @@
       </div>
       <div class="status-block">
         <div class="status-pill">&#9679; ACTIVE</div>
-        <!-- Last Updated -->
         <span class="status-date">3 140326.M42</span>
       </div>
     </div>
     <div class="scan-line"></div>
   </div>
 
-  <!-- Last Engagement -->
+  <!-- LAST ENGAGEMENT — replace entirely after every session -->
   <div class="section">
     <div class="section-header">
       <span class="section-tag">// Last Engagement</span>
       <div class="section-rule"></div>
     </div>
-
-    <div class="engagement-card" style="border-left-color: #b02828;">
+    <div class="engagement-card">
+      <div class="engagement-title">Boarding Action &mdash; The Ascendent</div>
+      <div class="engagement-meta">3 140326.M42 &middot; SHIP-CLASS VESSEL &middot; MANDEVILLE POINT APPROACH</div>
+      <ul class="sitrep">
+        <li>Inquisitor Corina rallied her crew and deployed Elite Breacher teams to secure the vessel.</li>
+        <li>Fighting for the teleportarium proved inconclusive. Agents held the Enginarium junctions &mdash; the Tome-Skull scattered cultists attempting to seize them.</li>
+        <li>As the <em>Ascendent</em> reached Mandeville point and translated into the Warp, the Master of the Watch noticed too late. Every psyker aboard began to scream.</li>
+      </ul>
+      <div class="intercept">
+        <span class="intercept-label">// Open Strategic Question</span>
+        What entered the Warp aboard the Ascendent &mdash; and what will be waiting when she translates out?
+      </div>
+    </div>
+    <div class="engagement-card" style="border-left-color:#b02828;">
       <div class="engagement-title">Ritual at the Grimoire Draconis</div>
       <div class="engagement-meta">3 140326.M42 &middot; ARCHEO GAOL OF SAINT SIGISMUND &middot; CHAOS FORCES</div>
       <ul class="sitrep">
-        <li>Forces of Chaos broke the shackles on the Grimoire Draconis, learning the Daemon&rsquo;s true name.</li>
-        <li>They battled a warp entity in the Archeo Gaol of Saint Sigismund to retrieve a Daemon weapon for the ritual.</li>
+        <li>Forces of Chaos broke the shackles on the Grimoire Draconis, learning the Daemon's true name.</li>
         <li>A lone servant of Nurgle risked and completed the sacrifice amidst skulls and viscera.</li>
         <li>Corposant glowed, unchecked growth ravaged the site. A Greater Unclean One bellowed and was manifest.</li>
       </ul>
-      <div class="intercept" style="border-left-color: #8a1f1f; color: #a04040;">
-        <span class="intercept-label" style="color: #b02828;">// Threat Assessment</span>
+      <div class="intercept" style="border-left-color:#8a1f1f;color:#a04040;">
+        <span class="intercept-label" style="color:#b02828;">// Threat Assessment</span>
         A Greater Unclean One is now bound to the Nurgle compact. The Grimoire Draconis is lost.
       </div>
     </div>
   </div>
 
-  <!-- Roster -->
+  <!-- FORCE ROSTER
+       Card states: .absent / .new-recruit / .fallen / .unknown
+       See CSS comments above for badge classes and when to use each. -->
   <div class="section">
     <div class="section-header">
       <span class="section-tag">// Force Roster</span>
@@ -250,9 +219,9 @@
     </div>
     <div class="roster-grid">
       <div class="roster-card">
-        <div class="roster-callsign">Jim</div>
+        <div class="roster-callsign">Jim / Chenstar</div>
         <div class="roster-faction">AELDARI</div>
-        <div class="roster-note">The Whitegrave campaign organiser. Ancient, patient, watching.</div>
+        <div class="roster-note">Campaign organiser. Ancient, patient, watching from the webway.</div>
       </div>
       <div class="roster-card">
         <div class="roster-callsign">Matt</div>
@@ -261,34 +230,147 @@
       </div>
       <div class="roster-card">
         <div class="roster-callsign">Ben</div>
-        <div class="roster-faction">Imperial Agents</div>
-        <div class="roster-note">Inquisitor Corina. Breacher teams. Warp transit in progress.</div>
+        <div class="roster-faction">IMPERIAL AGENTS</div>
+        <div class="roster-note">Inquisitor Corina's retinue. Breacher teams in Warp transit.</div>
+      </div>
+      <div class="roster-card">
+        <div class="roster-callsign">Sam</div>
+        <div class="roster-faction">CHAOS SPACE MARINES</div>
+        <div class="roster-note">Heretic Astartes. Allegiances and objectives as yet unclear.</div>
       </div>
       <div class="roster-card">
         <div class="roster-callsign">James</div>
-        <div class="roster-faction">Death Guard</div>
-        <div class="roster-note">Lord of Ultravirulence.</div>
+        <div class="roster-faction">DEATH GUARD &middot; NURGLE</div>
+        <div class="roster-note">Second servant of the Plague God. Ally or rival to Matt remains to be seen.</div>
       </div>
-      <div class="roster-card unknown">
-        <div class="roster-callsign">Sam</div>
-        <div class="roster-faction">Chaos Space Marine Undivided</div>
-        <div class="roster-note">Lord of Ultravirulence.</div
-        </div>
-      <div class="roster-card unknown">
-        <div class="roster-callsign">New Player</div>
-        <div class="roster-faction">Unknown</div>
-        <div class="roster-note">The more the merrier</div                                             
-      </div>
+      <!--
+        ABSENT:      <div class="roster-card absent">  ... <span class="roster-badge badge-absent">ABSENT</span>
+        NEW RECRUIT: <div class="roster-card new-recruit"> ... <span class="roster-badge badge-new-recruit">NEW RECRUIT</span>
+        FALLEN:      <div class="roster-card fallen">  ... <span class="roster-badge badge-fallen">FALLEN</span>
+      -->
     </div>
   </div>
 
-  <!-- Persons of Interest -->
+  <!-- PATH TO GLORY — see CSS comment block above for full update instructions -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag">// Path to Glory</span>
+      <div class="section-rule"></div>
+    </div>
+
+    <!-- JIM -->
+    <div class="ptg-row">
+      <div class="ptg-player-header">
+        <div><span class="ptg-player-name">Jim</span><span class="ptg-faction">AELDARI</span></div>
+        <div class="ptg-gp"><span>0</span> GP</div>
+      </div>
+      <div class="ptg-path">
+        <div class="ptg-node current"><div class="ptg-dot">G1</div><div class="ptg-label">Game 1</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G2</div><div class="ptg-label">Game 2</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>C1</span></div><div class="ptg-label">Conv.1</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G3</div><div class="ptg-label">Game 3</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G4</div><div class="ptg-label">Game 4</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G5</div><div class="ptg-label">Game 5</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>C2</span></div><div class="ptg-label">Conv.2</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G6</div><div class="ptg-label">Game 6</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G7</div><div class="ptg-label">Game 7</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>FC</span></div><div class="ptg-label">Final</div></div>
+      </div>
+      <div class="ptg-upgrades"><span class="ptg-no-upgrades">No upgrades yet</span></div>
+    </div>
+
+    <!-- MATT -->
+    <div class="ptg-row">
+      <div class="ptg-player-header">
+        <div><span class="ptg-player-name">Matt</span><span class="ptg-faction">DEATH GUARD</span></div>
+        <div class="ptg-gp"><span>0</span> GP</div>
+      </div>
+      <div class="ptg-path">
+        <div class="ptg-node current"><div class="ptg-dot">G1</div><div class="ptg-label">Game 1</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G2</div><div class="ptg-label">Game 2</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>C1</span></div><div class="ptg-label">Conv.1</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G3</div><div class="ptg-label">Game 3</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G4</div><div class="ptg-label">Game 4</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G5</div><div class="ptg-label">Game 5</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>C2</span></div><div class="ptg-label">Conv.2</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G6</div><div class="ptg-label">Game 6</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G7</div><div class="ptg-label">Game 7</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>FC</span></div><div class="ptg-label">Final</div></div>
+      </div>
+      <div class="ptg-upgrades"><span class="ptg-no-upgrades">No upgrades yet</span></div>
+    </div>
+
+    <!-- BEN -->
+    <div class="ptg-row">
+      <div class="ptg-player-header">
+        <div><span class="ptg-player-name">Ben</span><span class="ptg-faction">IMPERIAL AGENTS</span></div>
+        <div class="ptg-gp"><span>0</span> GP</div>
+      </div>
+      <div class="ptg-path">
+        <div class="ptg-node current"><div class="ptg-dot">G1</div><div class="ptg-label">Game 1</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G2</div><div class="ptg-label">Game 2</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>C1</span></div><div class="ptg-label">Conv.1</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G3</div><div class="ptg-label">Game 3</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G4</div><div class="ptg-label">Game 4</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G5</div><div class="ptg-label">Game 5</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>C2</span></div><div class="ptg-label">Conv.2</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G6</div><div class="ptg-label">Game 6</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G7</div><div class="ptg-label">Game 7</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>FC</span></div><div class="ptg-label">Final</div></div>
+      </div>
+      <div class="ptg-upgrades"><span class="ptg-no-upgrades">No upgrades yet</span></div>
+    </div>
+
+    <!-- SAM -->
+    <div class="ptg-row">
+      <div class="ptg-player-header">
+        <div><span class="ptg-player-name">Sam</span><span class="ptg-faction">CHAOS SPACE MARINES</span></div>
+        <div class="ptg-gp"><span>0</span> GP</div>
+      </div>
+      <div class="ptg-path">
+        <div class="ptg-node current"><div class="ptg-dot">G1</div><div class="ptg-label">Game 1</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G2</div><div class="ptg-label">Game 2</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>C1</span></div><div class="ptg-label">Conv.1</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G3</div><div class="ptg-label">Game 3</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G4</div><div class="ptg-label">Game 4</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G5</div><div class="ptg-label">Game 5</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>C2</span></div><div class="ptg-label">Conv.2</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G6</div><div class="ptg-label">Game 6</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G7</div><div class="ptg-label">Game 7</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>FC</span></div><div class="ptg-label">Final</div></div>
+      </div>
+      <div class="ptg-upgrades"><span class="ptg-no-upgrades">No upgrades yet</span></div>
+    </div>
+
+    <!-- JAMES -->
+    <div class="ptg-row">
+      <div class="ptg-player-header">
+        <div><span class="ptg-player-name">James</span><span class="ptg-faction">DEATH GUARD</span></div>
+        <div class="ptg-gp"><span>0</span> GP</div>
+      </div>
+      <div class="ptg-path">
+        <div class="ptg-node current"><div class="ptg-dot">G1</div><div class="ptg-label">Game 1</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G2</div><div class="ptg-label">Game 2</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>C1</span></div><div class="ptg-label">Conv.1</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G3</div><div class="ptg-label">Game 3</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G4</div><div class="ptg-label">Game 4</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G5</div><div class="ptg-label">Game 5</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>C2</span></div><div class="ptg-label">Conv.2</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G6</div><div class="ptg-label">Game 6</div></div>
+        <div class="ptg-node"><div class="ptg-dot">G7</div><div class="ptg-label">Game 7</div></div>
+        <div class="ptg-node convergence"><div class="ptg-dot"><span>FC</span></div><div class="ptg-label">Final</div></div>
+      </div>
+      <div class="ptg-upgrades"><span class="ptg-no-upgrades">No upgrades yet</span></div>
+    </div>
+
+  </div>
+
+  <!-- PERSONS OF INTEREST — add a row when a new significant NPC appears in play -->
   <div class="section">
     <div class="section-header">
       <span class="section-tag">// Persons of Interest</span>
       <div class="section-rule"></div>
     </div>
-
     <div class="poi-row">
       <div class="poi-sigil">IC</div>
       <div>
@@ -298,7 +380,6 @@
         <div class="threat-tag threat-asset">ASSET</div>
       </div>
     </div>
-
     <div class="poi-row">
       <div class="poi-sigil">GUO</div>
       <div>
@@ -308,7 +389,6 @@
         <div class="threat-tag threat-hostile">CRITICAL THREAT</div>
       </div>
     </div>
-
     <div class="poi-row">
       <div class="poi-sigil">??</div>
       <div>
@@ -320,13 +400,12 @@
     </div>
   </div>
 
-  <!-- Theatres -->
+  <!-- THEATRES OF OPERATION — update status class as control changes -->
   <div class="section">
     <div class="section-header">
       <span class="section-tag">// Theatres of Operation</span>
       <div class="section-rule"></div>
     </div>
-
     <div class="theatre-item">
       <div class="theatre-code">TH-01</div>
       <div>
@@ -335,16 +414,14 @@
         <div class="theatre-status status-warp">WARP TRANSIT</div>
       </div>
     </div>
-
     <div class="theatre-item">
       <div class="theatre-code">TH-02</div>
       <div>
         <div class="theatre-name">Grimoire Draconis</div>
-        <div class="theatre-note">Site of Nurgle ritual. Daemon weapon recovered. Greater Unclean One manifested. Imperials and unbelievers routed. Site considered lost.</div>
+        <div class="theatre-note">Site of Nurgle ritual. Daemon weapon recovered. Greater Unclean One manifested. Site considered lost.</div>
         <div class="theatre-status status-contested">CHAOS CONTROLLED</div>
       </div>
     </div>
-
     <div class="theatre-item">
       <div class="theatre-code">TH-03</div>
       <div>
@@ -353,7 +430,6 @@
         <div class="theatre-status status-unknown">STATUS UNKNOWN</div>
       </div>
     </div>
-
     <div class="theatre-item">
       <div class="theatre-code">TH-04</div>
       <div>
@@ -364,31 +440,27 @@
     </div>
   </div>
 
-  <!-- Intelligence Fragments -->
+  <!-- INTELLIGENCE FRAGMENTS — add newest at the top after each session -->
   <div class="section">
     <div class="section-header">
       <span class="section-tag">// Intelligence Fragments</span>
       <div class="section-rule"></div>
     </div>
-
     <div class="intel-item">
       <span class="intel-source">// Vox Intercept &middot; Ascendent Enginarium &middot; 3 140326.M42</span>
       <div class="intel-text">&ldquo;The rites of cleansing are begun &mdash; but something was already inside before the cultists boarded.&rdquo;</div>
     </div>
-
     <div class="intel-item">
       <span class="intel-source">// Field Observation &middot; Grimoire Draconis &middot; 3 140326.M42</span>
       <div class="intel-text">The Nurgle compact pledged to a powerful deity before the ritual commenced. They will not remain undivided.</div>
     </div>
-
     <div class="intel-item">
       <span class="intel-source">// Mechanicus Survey &middot; Archeo Gaol &middot; 3 140326.M42</span>
       <div class="intel-text">The Daemon weapon is now in the field. Its designation in the Gaol records was struck through. Whatever it is, someone wanted it forgotten.</div>
     </div>
-
-    <div class="intel-item" style="border-left-color: var(--amber-dim);">
+    <div class="intel-item" style="border-left-color:var(--amber-dim);">
       <span class="intel-source">// Strategic Note &middot; Update after next session</span>
-      <div class="intel-text" style="color: var(--text-dim);">Paste a rumour or open thread here after each game. One line is enough.</div>
+      <div class="intel-text" style="color:var(--text-dim);">Paste a rumour or open thread here after each game. One line is enough.</div>
     </div>
   </div>
 
